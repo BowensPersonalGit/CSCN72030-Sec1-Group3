@@ -1,27 +1,27 @@
 from abc import ABC, abstractmethod
 
 class Tank(ABC):
-    def __init__(self, max_capacity, current_capacity, max_pressure, current_pressure, file_name):
+    def __init__(self, max_capacity, current_level, max_pressure, current_pressure, controller, monitor):
         self.max_capacity = max_capacity
-        self.current_capacity = current_capacity
+        self.current_level = current_level
         self.file_name = file_name
 
     @abstractmethod
-    def getCurrentCapacity(self):
-        #Access fileIO class to interact with the file.
+    def getCurrentLevel(self):
+        #Use Monitor to get current_level
         return
     
     @abstractmethod
     def getMaxCapacity(self):
-        #Access fileIO class to interact with the file.
+        #Use Monitor to get the max_capacity
         return
     
-    def setCurrentCapacity(self):
-        #Access fileIO class to interact with the file.
+    def setCurrentLevel(self):
+        #Use Controller to change the current_level
         return
     
     def setMaxCapacity(self):
-        #Access fileIO class to interact with the file.
+        #Use Controller to change the max_capacity
         return
     
     
