@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>47e06ea2-05d9-47c0-9f41-3e3b68f958d2</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>test.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,11 +22,35 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="abstractTank.py" />
-    <Compile Include="controller.py" />
-    <Compile Include="monitor.py" />
-    <Compile Include="device.py" />
+    <Compile Include="abstract_classes\abstractTank.py" />
+    <Compile Include="abstract_classes\controller.py" />
+    <Compile Include="grapeController.py" />
+    <Compile Include="grapeMonitor.py" />
+    <Compile Include="gui\AppleWidget.py" />
+    <Compile Include="gui\CiderWidget.py" />
+    <Compile Include="gui\FooterWidget.py" />
+    <Compile Include="gui\GrapeWidget.py" />
+    <Compile Include="gui\MainWidget.py" />
+    <Compile Include="gui\TitleWidget.py" />
+    <Compile Include="gui\WaterWidget.py" />
+    <Compile Include="gui\WineWidget.py" />
+    <Compile Include="gui\__init__.py" />
+    <Compile Include="abstract_classes\monitor.py" />
+    <Compile Include="abstract_classes\device.py" />
+    <Compile Include="main.py" />
+    <Compile Include="grapeTank.py" />
     <Compile Include="test.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="gui\" />
+    <Folder Include="gui\imgs\" />
+    <Folder Include="abstract_classes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="grapeBacteria.txt" />
+    <Content Include="gui\imgs\icon.png" />
+    <Content Include="gui\imgs\logo.png" />
+    <Content Include="grapeLevel.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
