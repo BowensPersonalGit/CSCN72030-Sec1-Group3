@@ -6,10 +6,7 @@ import abstractTank
 class WaterTank(abstractTank):
     def __init__(self, file_name: list):
         super().__int__()
-        self.max_capacity = None
-        self.current_level = None
-        self.max_pressure = None
-        self.purity = None
+        self.purity = 0
         self.waterMonitor = None #WaterMonitor(file_name[0])
         self.waterController = None #WaterController(file_name[1])
     
@@ -18,12 +15,6 @@ class WaterTank(abstractTank):
         pass
 
     def setCurrentLevel(self):
-        pass
-
-    def getMaxCapacity(self):
-        pass
-
-    def setMaxCapacity(self):
         pass
 
     def getPurity(self):
