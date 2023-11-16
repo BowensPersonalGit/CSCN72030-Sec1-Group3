@@ -1,27 +1,27 @@
 # water tank class
-
-import abstractTank
+# an instance of this class will be created in main 
+from abstract classes.abstractTank import abstractTank
 
 
 class WaterTank(abstractTank):
     def __init__(self, file_name: list):
         super().__int__()
-        self.purity = 0
-        self.waterMonitor = None #WaterMonitor(file_name[0])
-        self.waterController = None #WaterController(file_name[1])
+        self._purity = 0
+        self._waterMonitor = WaterMonitor(file_name[0])
+        self._waterController = WaterController(file_name[1])
     
     # Getters and Setters
     def getCurrentLevel(self):
-        pass
+        return self.current_level
 
-    def setCurrentLevel(self):
-        pass
+    def setCurrentLevel(self, value):
+        self.current_level = value
 
     def getPurity(self):
-        pass
+        return self._purity
 
-    def setPurity(self):
-        pass
+    def setPurity(self, value):
+        self._purity = value
 
     
 if __name__ == "__main__":
