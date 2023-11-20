@@ -1,9 +1,9 @@
 # water tank class
 # an instance of this class will be created in main 
-from abstract classes.abstractTank import abstractTank
+from abstract_classes.abstractTank import abstractTank as Tank
 
 
-class WaterTank(abstractTank):
+class WaterTank(Tank):
     def __init__(self, file_name: list):
         super().__int__()
         self._purity = 0
