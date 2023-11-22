@@ -64,14 +64,14 @@ def increment_level():
     main.wineWidget.changePressure(counter)
     main.wineWidget.changeAlcohol(counter)
 
-    counter += 5
+    counter += 10
 
 
 # timer to space out the level changes
 # MUST USE QTIMER, NO time.sleep()
 timer = QTimer()
 timer.timeout.connect(increment_level)  # set what happend when timer times out
-timer.start(1000)  # start timer by milliseconds
+timer.start(600)  # start timer by milliseconds
 
 ###############################################################
 

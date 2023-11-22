@@ -39,11 +39,12 @@ class AppleWidget(QFrame):
 
     # Set the levels (PASS IN VALUES HERE)
     def changeLevels(self, value):
-        self.appleTankWidget.level = value
+        if value <= 100:
+            self.appleTankWidget.level = value
 
     # Set the concentration (PASS IN VALUES HERE)
     def changeConcentration(self, value):
-        self.appleMonitorWidget.concentration = value
+            self.appleMonitorWidget.concentration = 22
 
 
 #
@@ -202,9 +203,10 @@ class AppleControllerWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.button = QPushButton("REFILL TANK")
-        self.button.setCursor(Qt.PointingHandCursor)
-        self.button.setStyleSheet(
+        self.refillButton = QPushButton("REFILL TANK")
+        self.refillButton.setCursor(Qt.PointingHandCursor)
+
+        self.refillButton.setStyleSheet(
             """
             *{
             background-color: rgb(47, 93, 140);
@@ -219,10 +221,41 @@ class AppleControllerWidget(QWidget):
             """
         )
 
+        # monitor concentration button
+        self.monitorConcentrationButton = QPushButton("MONITOR CONCENTRATION")
+        self.monitorConcentrationButton.setCursor(Qt.PointingHandCursor)
+
+        self.monitorConcentrationButton.setStyleSheet(
+            """
+            *{
+            background-color: rgb(47, 93, 140);
+            color: black;
+            font-size: 20px;
+            border-radius: 20px;
+            padding: 10px 20px;
+            }
+            *:hover{
+                background: rgb(213, 94, 45);
+                }
+            """
+        )
+
+        # connect button to refill tank
+        self.refillButton.clicked.connect(self.refillTank)
+
         # add widgets to layout
-        layout.addWidget(self.button, 0, Qt.AlignBottom | Qt.AlignCenter)
+        layout.addWidget(self.refillButton, 0, Qt.AlignBottom | Qt.AlignCenter)
+        layout.addWidget(self.monitorConcentrationButton, 0, Qt.AlignBottom | Qt.AlignCenter)
 
 
+    def refillTank(self):
+        tank_value = 80; 
+        parent_widget = self.parent()
+        if parent_widget:
+            monitor_widget = parent_widget.appleTankWidget
+            monitor_widget.level = tank_value
+
+ 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = AppleWidget()
