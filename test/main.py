@@ -48,7 +48,6 @@ grapeControllerWidget = main.grapeWidget.grapeControllerWidget
 ########################## DEMO TEST CODE ##########################
 counter = 0
 
-
 def update():
     
     grapeControllerWidget.incrementCurrentLevel()
@@ -90,10 +89,10 @@ def updateAllTankValues(grapeLevel, bacteriaLevel, appleLevel, appleConcentratio
 
 #     counter += 5
 
-
 # timer to space out the level changes
 # MUST USE QTIMER, NO time.sleep()
 timer = QTimer()
+
 timer.timeout.connect(update)  # set what happend when timer times out
 timer.start(500)  # start timer by milliseconds
 
