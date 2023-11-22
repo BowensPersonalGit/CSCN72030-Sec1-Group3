@@ -24,7 +24,9 @@ class TitleWidget(QFrame):
         # frame
         self.setContentsMargins(0, 0, 0, 0)
         self.setFixedHeight(75)
-        self.setStyleSheet("background-color: rgb(50, 50, 50);padding: 0px; margin: 0px;")
+        self.setStyleSheet(
+            "background-color: rgb(50, 50, 50);padding: 0px; margin: 0px;"
+        )
 
         # icon label
         self.iconLabel = QLabel()
@@ -107,6 +109,10 @@ class TitleWidget(QFrame):
     # mouse release
     def mouseReleaseEvent(self, event: QMouseEvent):
         self.IsDraggable = False
+
+    # double click to maximize window fucntion
+    def mouseDoubleClickEvent(self, event: QMouseEvent):
+        self.maximizeWindow()
 
     # button functions
     # minimize button function
