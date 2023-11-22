@@ -4,6 +4,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication, QFrame, QWidget, QVBoxLayout
 from PyQt5.QtCore import Qt, QTimer
+from grapeController import grapeController
 
 from gui.MainWidget import MainWidget
 from gui.TitleWidget import TitleWidget
@@ -42,34 +43,33 @@ layout.addWidget(footer)
 # show
 title.show()
 main.show()
-
+grapeControllerWidget = main.grapeWidget.grapeControllerWidget
 
 ########################## DEMO TEST CODE ##########################
 counter = 0
 
 
 def update():
-    GrapeTank = grapeTank("grapeLevel.txt", "grapeBacteria.txt", main)
-    GrapeTank.updateGrapeTank()
+    
+    grapeControllerWidget.incrementCurrentLevel()
+    grapeControllerWidget.incrementBacteriaLevel()
+    updateAllTankValues(grapeControllerWidget.returnCurrentLevel(), grapeControllerWidget.returnBacteriaLevel(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    
+    
 
-def changeAppleTankValues(appleLevel, appleConcentration):
-        main.appleWidget.changeLevels(appleLevel)
-        main.appleWidget.changeConcentration(appleConcentration)
-
-        
-def changeWaterTankValues(waterLevel, waterPurity):
-        main.waterWidget.changeLevels(waterLevel)
-        main.waterWidget.changePurity(waterPurity)
-        
-def changeCiderTankValues(ciderLevel, ciderPressure, ciderAlcohol):
-        main.ciderWidget.changeLevels(ciderLevel)
-        main.ciderWidget.changePressure(ciderPressure)
-        main.ciderWidget.changeAlcohol(ciderAlcohol)
-
-def changeWineTankValues(wineLevel, winePressure, wineAlcohol):
-        main.wineWidget.changeLevels(wineLevel)
-        main.wineWidget.changePressure(winePressure)
-        main.wineWidget.changeAlcohol(wineAlcohol)
+def updateAllTankValues(grapeLevel, bacteriaLevel, appleLevel, appleConcentration, waterLevel, waterPurity, ciderLevel, ciderPressure,ciderAlcohol, wineLevel, winePressure, wineAlcohol):
+    main.grapeWidget.changeLevels(grapeLevel)
+    main.grapeWidget.changeBacteria(bacteriaLevel)       
+    main.appleWidget.changeLevels(appleLevel)
+    main.appleWidget.changeConcentration(appleConcentration)
+    main.waterWidget.changeLevels(waterLevel)
+    main.waterWidget.changePurity(waterPurity)    
+    main.ciderWidget.changeLevels(ciderLevel)
+    main.ciderWidget.changePressure(ciderPressure)
+    main.ciderWidget.changeAlcohol(ciderAlcohol)
+    main.wineWidget.changeLevels(wineLevel)
+    main.wineWidget.changePressure(winePressure)
+    main.wineWidget.changeAlcohol(wineAlcohol)
         
 # def increment_level():
 #     global counter
@@ -95,7 +95,7 @@ def changeWineTankValues(wineLevel, winePressure, wineAlcohol):
 # MUST USE QTIMER, NO time.sleep()
 timer = QTimer()
 timer.timeout.connect(update)  # set what happend when timer times out
-timer.start(1000)  # start timer by milliseconds
+timer.start(500)  # start timer by milliseconds
 
 ###############################################################
 
