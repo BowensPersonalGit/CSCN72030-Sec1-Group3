@@ -1,5 +1,6 @@
 # Cider widget
 import sys
+from .AppleWidget import *
 
 from PyQt5.QtWidgets import (
     QApplication,
@@ -41,6 +42,7 @@ class CiderWidget(QFrame):
 
     # Set the levels (PASS IN VALUES HERE)
     def changeLevels(self, value):
+        value = CiderTank.getCurrentLevel()
         self.ciderTankWidget.level = value
 
     # Set the pressure (PASS IN VALUES HERE)
@@ -244,9 +246,36 @@ class CiderControllerWidget(QWidget):
                 }
             """
         )
-
+        
+        self.button.clicked.connect(self.fermentCider)
         # add widgets to layout
         layout.addWidget(self.button, 0, Qt.AlignBottom | Qt.AlignCenter)
+
+    def fermentCider(self):
+    
+        # set values for the timer  
+        self.current_value = 0
+        self.target_value = 100
+        self.increment = 5
+
+        # create timer to increment the label
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_tank_level)
+        self.timer.start(300)  # Update every 40 milliseconds
+        AppleControllerWidget.dec_tank_level()
+
+    def update_tank_level(self):
+        # Increment the tank level until the target is reached
+        if self.current_value <= self.target_value:
+            # Update the tank level in the AppleWidget instance
+            parent_widget = self.parent()
+            if parent_widget:
+                tank_widget = parent_widget.ciderTankWidget
+                tank_widget.level = self.current_value
+
+            self.current_value += self.increment
+        else:
+            self.timer.stop()
 
 
 if __name__ == "__main__":

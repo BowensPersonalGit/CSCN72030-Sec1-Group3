@@ -14,6 +14,7 @@ from PyQt5.QtCore import Qt, QTimer
 
 globalTankLevel = 100
 
+
 #
 # Main widget for Apple
 #
@@ -247,61 +248,7 @@ class AppleControllerWidget(QWidget):
 
 
         # add widgets to layout
-        layout.addWidget(self.refillButton, 0, Qt.AlignBottom | Qt.AlignCenter)
-        layout.addWidget(self.monitorConcentrationButton, 0, Qt.AlignBottom | Qt.AlignCenter)
-
-
-    def refillTank(self):
-    
-    # set values for the timer  
-        self.current_value = 70
-        self.target_value = globalTankLevel
-        self.increment = 10
-
-    # create timer to increment the label
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_tank_level)
-        self.timer.start(300)  # Update every 40 milliseconds
-    
-
-    def update_tank_level(self):
-        # Increment the tank level until the target is reached
-        if self.current_value <= self.target_value:
-            # Update the tank level in the AppleWidget instance
-            parent_widget = self.parent()
-            if parent_widget:
-                tank_widget = parent_widget.appleTankWidget
-                tank_widget.level = self.current_value
-
-            self.current_value += self.increment
-        else:
-            self.timer.stop()
-
-    def fermentCider(self):
-        
-    # set values for the timer  
-        self.current_value = globalTankLevel
-        self.target_value = globalTankLevel - 30
-        self.decrement = 10
-
-    # create timer to increment the label
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.dec_tank_level)
-        self.timer.start(300)  # Update every 300 milliseconds
-    
-
-    def dec_tank_level(self):
-        # Increment the tank level until the target is reached
-        if self.current_value >= self.target_value:
-            # Update the tank level in the AppleWidget instance
-            parent_widget = self.parent()
-            if parent_widget:
-                tank_widget = parent_widget.appleTankWidget
-                tank_widget.level = self.current_value
-
-            self.current_value -= self.decrement
-        else:
-            self.timer.stop()
+        layout.addWidget(self.button, 0, Qt.AlignBottom | Qt.AlignCenter)
 
  
 if __name__ == "__main__":

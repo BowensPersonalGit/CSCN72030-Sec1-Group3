@@ -1,8 +1,6 @@
 from abstractTank import *
 from controller import *
 from monitor import *
-from grapeTank import *
-from appleTank import *
 
 class CiderMonitor(Monitor):
     def __init__(self, curCap, curPressure):
@@ -19,9 +17,10 @@ class CiderMonitor(Monitor):
         return self.curCap
 
 class CiderController(Controller):
-    def __init__(self):
-        self.waterLevel = waterTank.getCurrentWaterLevel()
-        self.appleLevel = appleTank.getCurrentAppleLevel()
+    def __init__(self, cap, pressure):
+        self.cap = cap
+        self.pressure = pressure
+        return
     
     def addWater(self):
         #interact with water module to change file pointer.
@@ -36,10 +35,22 @@ class CiderTank(Tank):
         self.ciderController = CiderController(maxCapacity, maxPressure)
         self.ciderMonitor = CiderMonitor
 
-    def brewCider(self):
-        appleTank.takeProduct(50)
-        waterTank.takeProduct(50)
-        self.ciderMonitor.setNewCurrentLevel(100)
+    def getCurrentLevel(self):
+        return
+    
+    def getMaxCapacity(self):
+        return
+    
+    def setCurrentLevel(self):
+        return
+    
+    def setMaxCapacity(self):
+        return
+    
+    def brewCider(self, applesTaken, waterTaken):
+        self.applesTaken = applesTaken
+        self.watertaken = waterTaken
+        self.ciderMonitor.setNewCurrentLevel(applesTaken + waterTaken)
         return self.ciderMonitor.monitorCurrentLevel()
 
 
