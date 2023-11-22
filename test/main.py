@@ -57,7 +57,6 @@ def increment_level():
     main.wineWidget.changeLevels(counter)
 
     main.waterWidget.changePurity(counter)
-    main.appleWidget.changeConcentration(counter)
     main.ciderWidget.changePressure(counter)
     main.ciderWidget.changeAlcohol(counter)
     main.grapeWidget.changeBacteria(counter)
@@ -71,7 +70,7 @@ def increment_level():
 # MUST USE QTIMER, NO time.sleep()
 timer = QTimer()
 timer.timeout.connect(increment_level)  # set what happend when timer times out
-timer.start(600)  # start timer by milliseconds
+timer.start(500)  # start timer by milliseconds
 
 ###############################################################
 
