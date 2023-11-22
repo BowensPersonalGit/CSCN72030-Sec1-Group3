@@ -15,16 +15,8 @@ class Tank(ABC):
         return
     
     @abstractmethod
-    def getMaxCapacity(self):
-        #Use Monitor to get the max_capacity
-        return
-    
     def setCurrentLevel(self):
         #Use Controller to change the current_level
-        return
-    
-    def setMaxCapacity(self):
-        #Use Controller to change the max_capacity
         return
     
     

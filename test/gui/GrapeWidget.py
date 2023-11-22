@@ -11,6 +11,10 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
+from abstract_classes.abstractTank import Tank
+
+from grapeTank import grapeTank
+
 
 
 #
@@ -21,7 +25,7 @@ class GrapeWidget(QFrame):
         super().__init__()
         self.grapeTankWidget = GrapeTankWidget()
         self.grapeMonitorWidget = GrapeMonitorWidget()
-        self.grapeControllerWidget = GrapeControllerWidget()
+        self.grapeControllerWidget = GrapeControllerWidget(grapeTank("grapeLevel.txt", "grapeBacteria.txt", self))
 
         self.setStyleSheet("background-color: rgb(216, 216, 214);")
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
@@ -191,17 +195,35 @@ class GrapeMonitorWidget(QFrame):
 # widget for Controllers
 #
 class GrapeControllerWidget(QWidget):
-    def __init__(self):
+    def __init__(self, grapeTank):
         super().__init__()
-
         # layout
         layout = QVBoxLayout()
         self.setLayout(layout)
-
+        self.Tank = grapeTank
+        self.expectedLinePtr = 0
+        self.expectedBacteriaLinePtr = 0
         # buttons
-        self.button = QPushButton("REFILL TANK")
-        self.button.setCursor(Qt.PointingHandCursor)
-        self.button.setStyleSheet(
+        self.refillButton = QPushButton("REFILL TANK")
+        self.refillButton.setCursor(Qt.PointingHandCursor)
+        self.replaceActive = False;
+        self.refillButton.setStyleSheet(
+            """
+            *{
+            background-color: rgb(47, 93, 140);
+            color: black;
+            font-size: 20px;
+            border-radius: 20px;
+            padding: 10px 20px;
+            }
+            *:hover{
+                background: rgb(213, 94, 45);
+                }
+            """
+        )
+        self.replaceButton = QPushButton("REPLACE GRAPES")
+        self.replaceButton.setCursor(Qt.PointingHandCursor)
+        self.replaceButton.setStyleSheet(
             """
             *{
             background-color: rgb(47, 93, 140);
@@ -216,9 +238,54 @@ class GrapeControllerWidget(QWidget):
             """
         )
 
+        self.refillButton.clicked.connect(self.refillTank)
+        self.replaceButton.clicked.connect(self.replaceGrapesFirst)
         # add widgets to layout
-        layout.addWidget(self.button, 0, Qt.AlignBottom | Qt.AlignCenter)
+        layout.addWidget(self.replaceButton, 0, Qt.AlignBottom | Qt.AlignCenter)
+        layout.addWidget(self.refillButton, 0, Qt.AlignBottom | Qt.AlignCenter)
+    def refillTank(self):
+        self.expectedLinePtr = 10
+        self.expectedBacteriaLinePtr = 100
+        
+    def replaceGrapesFirst(self):
+        self.replaceActive = True
+        self.expectedLinePtr = 0
+        self.expectedBacteriaLinePtr = 0
 
+    def replaceGrapesSecond(self):
+        self.replaceActive = False
+        self.refillTank()
+        self.expectedBacteriaLinePtr = 100
+        
+    def incrementCurrentLevel(self):
+        if(self.Tank.getLinePtrValue() < self.expectedLinePtr):
+            self.Tank.setCurrentLevel(self.Tank.getLinePtrValue() + 1)
+            
+        elif(self.Tank.getLinePtrValue() > self.expectedLinePtr):
+            self.Tank.setCurrentLevel(self.Tank.getLinePtrValue() - 1)
+            
+        if(self.replaceActive and self.Tank.getLinePtrValue() == 0):
+            self.replaceGrapesSecond()
+            
+    def incrementBacteriaLevel(self):
+        if(self.Tank.getBacteriaLinePtrValue() < self.expectedBacteriaLinePtr):
+            self.Tank.setBacteriaLevel(self.Tank.getBacteriaLinePtrValue() + 1)
+            
+        elif(self.Tank.getBacteriaLinePtrValue() > self.expectedBacteriaLinePtr):
+            self.Tank.setBacteriaLevel(self.Tank.getBacteriaLinePtrValue() - 10)
+            
+        if(self.Tank.getBacteriaLinePtrValue() < 0):
+            self.Tank.setBacteriaLevel(0)
+    
+    def returnCurrentLevel(self):
+        return self.Tank.getCurrentLevel()
+    
+    def returnBacteriaLevel(self):
+        return self.Tank.getBacteriaLevel()
+    
+        
+            
+        
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
