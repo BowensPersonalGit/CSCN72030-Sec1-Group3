@@ -14,7 +14,7 @@ class Tank(ABC):
         #Use Monitor to get current_level
         return
     
-    
+    @abstractmethod
     def setCurrentLevel(self):
         #Use Controller to change the current_level
         return

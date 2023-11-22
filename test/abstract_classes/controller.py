@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from abstract_classes.device import Device
 
+
 class Controller(Device):
     @abstractmethod
     def changeCurrentLevel(self):
