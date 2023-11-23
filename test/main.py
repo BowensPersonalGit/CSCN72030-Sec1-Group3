@@ -9,12 +9,12 @@ from grapeController import grapeController
 from gui.MainWidget import MainWidget
 from gui.TitleWidget import TitleWidget
 from gui.FooterWidget import FooterWidget
-<<<<<<< HEAD
+
 from grapeTank import grapeTank
-=======
+
 from CiderTank import *
 
->>>>>>> bowensbranch
+
 app = QApplication(sys.argv)
 
 # window
@@ -48,7 +48,6 @@ layout.addWidget(footer)
 # show
 title.show()
 main.show()
-<<<<<<< HEAD
 grapeControllerWidget = main.grapeWidget.grapeControllerWidget
 
 ########################## DEMO TEST CODE ##########################
@@ -106,7 +105,5 @@ timer.start(500)  # start timer by milliseconds
 
 
 sys.exit(app.exec())
-=======
 
-sys.exit(app.exec())
->>>>>>> bowensbranch
+
