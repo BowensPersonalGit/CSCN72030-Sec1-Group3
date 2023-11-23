@@ -13,12 +13,14 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
 
+from CiderTank import CiderTank
+
 
 #
 # Main widget for Cider
 #
 class CiderWidget(QFrame):
-    def __init__(self):
+    def __init__(self, ciderTank: CiderTank):
         super().__init__()
         self.ciderTankWidget = CiderTankWidget()
         self.ciderMonitorWidget = CiderMonitorWidget()
@@ -39,17 +41,76 @@ class CiderWidget(QFrame):
         layout.addWidget(self.ciderControllerWidget, 0, Qt.AlignCenter | Qt.AlignBottom)
         layout.addWidget(self.ciderTankWidget, 0, Qt.AlignCenter)
 
-    # Set the levels (PASS IN VALUES HERE)
-    def changeLevels(self, value):
-        self.ciderTankWidget.level = value
+        # TANK OBJ HERE ##############
+        self.ciderTank = ciderTank
+        # TANK OBJ HERE ##############
+        self.update()
 
-    # Set the pressure (PASS IN VALUES HERE)
-    def changePressure(self, value):
-        self.ciderMonitorWidget.pressure = value
+        #############button clicked events################
+        self.ciderControllerWidget.fermentButton.clicked.connect(self.ferment)
 
-    # Set the alcohol (PASS IN VALUES HERE)
-    def changeAlcohol(self, value):
-        self.ciderMonitorWidget.alcohol = value
+    # Update the GUI
+    def update(self):
+        """Update the GUI based on the target values and actual values"""
+        currentLevel = self.ciderTank.getCurrentLevel()
+        currentPressure = self.ciderTank.getPressure()
+        currentAlcohol = self.ciderTank.getAlcohol()
+        # check if level target values are set
+        if self.ciderControllerWidget.targetLevel is not None:
+            if currentLevel < self.ciderControllerWidget.targetLevel:
+                self.ciderTank.setCurrentLevel(currentLevel + 1)
+                #################################################
+                #TODO: decrement water and apple levels in the FILES
+                #hard code dat shit!
+                ###################################################
+            else:
+                self.ciderTank.setCurrentLevel(currentLevel - 1)
+        # check if pressure target values are set
+        if self.ciderControllerWidget.targetPressure is not None:
+            if currentPressure < self.ciderControllerWidget.targetPressure:
+                self.ciderTank.setPressure(currentPressure + 1)
+            else:
+                self.ciderTank.setPressure(currentPressure - 1)
+        # check if alcohol target values are set
+        if self.ciderControllerWidget.targetAlcohol is not None:
+            if currentAlcohol < self.ciderControllerWidget.targetAlcohol:
+                self.ciderTank.setAlcohol(currentAlcohol + 1)
+            else:
+                self.ciderTank.setAlcohol(currentAlcohol - 1)
+
+        # if target values are reached, set target values to None
+        if self.ciderControllerWidget.targetLevel == currentLevel:
+            print("target cider level target reached")
+            self.ciderControllerWidget.targetLevel = None
+        if self.ciderControllerWidget.targetPressure == currentPressure:
+            print("target cider pressure target reached")
+            self.ciderControllerWidget.targetPressure = None
+        if self.ciderControllerWidget.targetAlcohol == currentAlcohol:
+            print("target cider alcohol target reached")
+            self.ciderControllerWidget.targetAlcohol = None
+
+        # update widgets to actual values
+        self.ciderTankWidget.level = currentLevel
+        self.ciderMonitorWidget.pressure = currentPressure
+        self.ciderMonitorWidget.alcohol = currentAlcohol
+
+    # FOR SETTING TARGET VALUES
+    def setLevelTarget(self, value):
+        """Set the target level of the cider tank"""
+        self.ciderControllerWidget.targetLevel = value
+
+    def setPressureTarget(self, value):
+        """Set the target pressure of the cider tank"""
+        self.ciderControllerWidget.targetPressure = value
+    
+    def setAlcoholTarget(self, value):
+        """Set the target alcohol of the cider tank"""
+        self.ciderControllerWidget.targetAlcohol = value
+
+    def ferment(self):
+        """Refill the cider tank - for refill button"""
+        self.setLevelTarget(99)
+
 
 
 #
@@ -81,7 +142,7 @@ class CiderTankWidget(QWidget):
         # draw tank
         self.drawTank(painter)
 
-        # update label  
+        # update label
         self.label.setText(f"{self._level}%")
 
     # Draw tank
@@ -223,14 +284,19 @@ class CiderControllerWidget(QWidget):
     def __init__(self):
         super().__init__()
 
+        # target values
+        self._targetLevel = None
+        self._targetPressure = None
+        self._targetAlcohol = None
+
         # layout
         layout = QVBoxLayout()
         self.setLayout(layout)
 
         # buttons
-        self.button = QPushButton("START\nFERMENTATION")
-        self.button.setCursor(Qt.PointingHandCursor)
-        self.button.setStyleSheet(
+        self.fermentButton = QPushButton("START\nFERMENTATION")
+        self.fermentButton.setCursor(Qt.PointingHandCursor)
+        self.fermentButton.setStyleSheet(
             """
             *{
             background-color: rgb(47, 93, 140);
@@ -246,7 +312,33 @@ class CiderControllerWidget(QWidget):
         )
 
         # add widgets to layout
-        layout.addWidget(self.button, 0, Qt.AlignBottom | Qt.AlignCenter)
+        layout.addWidget(self.fermentButton, 0, Qt.AlignBottom | Qt.AlignCenter)
+
+    # Getter and Setter for target values
+    @property
+    def targetLevel(self):
+        return self._targetLevel
+    
+    @targetLevel.setter
+    def targetLevel(self, value):
+        self._targetLevel = value
+    
+    @property
+    def targetPressure(self):
+        return self._targetPressure
+    
+    @targetPressure.setter
+    def targetPressure(self, value):
+        self._targetPressure = value
+
+    @property
+    def targetAlcohol(self):
+        return self._targetAlcohol
+    
+    @targetAlcohol.setter
+    def targetAlcohol(self, value):
+        self._targetAlcohol = value
+
 
 
 if __name__ == "__main__":
