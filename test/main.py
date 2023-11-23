@@ -43,37 +43,11 @@ layout.addWidget(footer)
 title.show()
 main.show()
 
-
-########################## DEMO TEST CODE ##########################
-counter = 0
-
-
-def increment_level():
-    global counter
-    main.waterWidget.changeLevels(counter)
-    main.appleWidget.changeLevels(counter)
-    main.ciderWidget.changeLevels(counter)
-    main.grapeWidget.changeLevels(counter)
-    main.wineWidget.changeLevels(counter)
-
-    main.waterWidget.changePurity(counter)
-    main.appleWidget.changeConcentration(counter)
-    main.ciderWidget.changePressure(counter)
-    main.ciderWidget.changeAlcohol(counter)
-    main.grapeWidget.changeBacteria(counter)
-    main.wineWidget.changePressure(counter)
-    main.wineWidget.changeAlcohol(counter)
-
-    counter += 5
-
-
-# timer to space out the level changes
-# MUST USE QTIMER, NO time.sleep()
+# GLOBAL UPDATE ALL WIDGETS
 timer = QTimer()
-timer.timeout.connect(increment_level)  # set what happend when timer times out
-timer.start(1000)  # start timer by milliseconds
+timer.timeout.connect(main.update) 
+timer.start(1000)  
 
-###############################################################
 
 
 sys.exit(app.exec())
