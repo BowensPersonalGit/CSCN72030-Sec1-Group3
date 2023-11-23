@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
-
+from .warning_popup import showPopup
 from .buttons import Button
 
 from WineTank import WineTank
@@ -35,7 +35,7 @@ class WineWidget(QFrame):
 
         # define layout
         layout = QVBoxLayout()
-        self.setLaselfyout(layout)
+        self.setLayout(layout)
 
         # add widgets to layout
         layout.addWidget(self.wineMonitorWidget, 0, Qt.AlignCenter)
@@ -48,6 +48,7 @@ class WineWidget(QFrame):
         self.update()
 
         #############button clicked events################
+        self.wineControllerWidget.fermentButton.clicked.connect(self.ferment)
 
     # Update the GUI
     def update(self):
@@ -82,7 +83,7 @@ class WineWidget(QFrame):
         if self.wineControllerWidget.targetLevel == currentLevel:
             print("target wine level target reached")
             self.wineControllerWidget.targetLevel = None
-            self.wineControllerWidget.refillButton.enable()
+            self.wineControllerWidget.fermentButton.enable()
         if self.wineControllerWidget.targetPressure == currentPressure:
             print("target wine pressure target reached")
             self.wineControllerWidget.targetPressure = None
@@ -94,6 +95,34 @@ class WineWidget(QFrame):
         self.wineTankWidget.level = currentLevel
         self.wineMonitorWidget.pressure = currentPressure
         self.wineMonitorWidget.alcohol = currentAlcohol
+
+    # takes grapes from the grape tank,return false if not enough grpaes
+    def takeGrapes(self, value):
+        # TODO:
+        # open the grape tank file
+
+        # check if there are enough grapes
+
+        # open the wine tank file
+        pass
+
+    # take water from water tank, return false if not enough water
+    def takeWater(self, value):
+        # open water file and read value
+        with open("./test/water_levels.txt", "r") as f:
+            f_contents = f.readlines()
+            currentWaterLevel = int(f_contents[-1])
+
+        # check if there is enough water
+        if (100 - self.ciderTank.getCurrentLevel()) / 2 > currentWaterLevel:
+            print("not enough water")
+            return False
+
+        # open apple file and append new value
+        with open("./test/water_levels.txt", "a") as f:
+            f.write(str(currentWaterLevel - value) + "\n")
+
+        return True
 
     # FOR SETTING TARGET VALUES
     def setLevelTarget(self, value):
@@ -324,4 +353,3 @@ class WineControllerWidget(QWidget):
     @targetAlcohol.setter
     def targetAlcohol(self, value):
         self._targetAlcohol = value
-

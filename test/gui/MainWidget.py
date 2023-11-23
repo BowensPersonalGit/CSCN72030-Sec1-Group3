@@ -12,7 +12,7 @@ from PyQt5.QtCore import Qt, QTimer
 
 # import WIDGETS
 from .WaterWidget import WaterWidget
-#from .WineWidget import WineWidget
+from .WineWidget import WineWidget
 from .CiderWidget import CiderWidget
 #from .GrapeWidget import GrapeWidget
 from .AppleWidget import AppleWidget
@@ -21,6 +21,7 @@ from .AppleWidget import AppleWidget
 from WaterTank import WaterTank
 from AppleTank import AppleTank
 from CiderTank import CiderTank
+from WineTank import WineTank
 
 
 #
@@ -45,7 +46,7 @@ class MainWidget(QFrame):
         self.waterWidget = WaterWidget(
             WaterTank(["./test/water_levels.txt", "./test/water_puritys.txt"])
         )
-        # self.wineWidget = WineWidget()
+        self.wineWidget = WineWidget(WineTank())
         self.ciderWidget = CiderWidget(CiderTank())
         self.appleWidget = AppleWidget(
             AppleTank(["./test/apple_levels.txt", "./test/apple_concentration.txt"])
@@ -56,14 +57,14 @@ class MainWidget(QFrame):
         layout.addWidget(self.appleWidget)
         layout.addWidget(self.ciderWidget)
         layout.addWidget(self.waterWidget)
-        #layout.addWidget(self.wineWidget)
+        layout.addWidget(self.wineWidget)
         #layout.addWidget(self.grapeWidget)
 
     def update(self):
         """Update all the widgets in the main widget"""
         print("MainWidget.update()")
         self.waterWidget.update()
-        # self.wineWidget.update()
+        self.wineWidget.update()
         self.ciderWidget.update()
         self.appleWidget.update()
         # self.grapeWidget.update()
