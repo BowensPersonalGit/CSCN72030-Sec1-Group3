@@ -45,6 +45,9 @@ class WaterWidget(QFrame):
 
         # TANK OBJ HERE ##############
         self.waterTank = waterTank
+        self.purityGraph = Graph(
+            "Water Purity", readFromFile(self.waterTank.waterMonitor.sourceNames[1])
+        )
         self.update()
 
         #############button clicked events################
@@ -52,14 +55,11 @@ class WaterWidget(QFrame):
         self.waterControllerWidget.purifyButton.clicked.connect(self.purify)
 
     def showPurityGraph(self):
-        self.putityGraph = Graph(
-            "Water Purity", readFromFile(self.waterTank.waterMonitor.sourceNames[1])
-        )
         self.graphWindow = QWidget()
         self.graphWindow.setMinimumSize(600, 400)
         self.graphWindowLayout = QVBoxLayout()
         self.graphWindow.setLayout(self.graphWindowLayout)
-        self.graphWindowView = QChartView(self.putityGraph)
+        self.graphWindowView = QChartView(self.purityGraph)
         self.graphWindowLayout.addWidget(self.graphWindowView)
 
         return self.graphWindow.show()
@@ -98,6 +98,9 @@ class WaterWidget(QFrame):
         # update widgets to actual values
         self.waterTankWidget.level = currentLevel
         self.waterMonitorWidget.purity = currentPurity
+
+        # update graph
+        self.purityGraph.update(self.waterMonitorWidget.purity)
 
     # FOR SETTING TARGET VALUES
     def setLevelTarget(self, value):
@@ -263,8 +266,6 @@ class WaterMonitorWidget(QFrame):
         print("double clicked")
         # show purity graph
         self.parent().showPurityGraph()
-
-        
 
 
 #

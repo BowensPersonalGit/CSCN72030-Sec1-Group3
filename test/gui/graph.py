@@ -1,4 +1,4 @@
-# create a chart 
+# create a chart
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PyQt5.QtChart import QChart, QChartView, QLineSeries, QValueAxis
@@ -10,26 +10,33 @@ class Graph(QChart):
     """Creates a chart with a list of values.
     The chart is updated with new values using the update() method
     MUST BE USED WITH QChartView"""
-    def __init__(self, title, values:list):
+
+    def __init__(self, title, values: list):
         super().__init__()
         self.setTitle(title)
-        self.setAnimationOptions(QChart.SeriesAnimations)
 
         # set up the series from values
         self.count = 0
-        self.values = QLineSeries()
+        self.lineSeries = QLineSeries()
         self.valuesLen = len(values)
         for i in range(self.valuesLen):
-            self.values.append(QPoint(i, values[i]))
+            self.lineSeries.append(QPoint(i, values[i]))
             self.count += 1
 
-        self.addSeries(self.values)
-        self.createDefaultAxes()
+        self.addSeries(self.lineSeries)
+        self.xAxis = QValueAxis()
+        self.xAxis.setRange(0, self.count)
+        self.yAxis = QValueAxis()
+        self.yAxis.setRange(0, 100)
+        self.setAxisX(self.xAxis, self.lineSeries)
+        self.setAxisY(self.yAxis, self.lineSeries)
 
-        
     def update(self, value):
         """Update the chart with a new value"""
-        self.values.append(QPoint(self.count, value))
+        self.lineSeries.append(QPoint(self.count, value))
+        self.count += 1
+        self.xAxis.setRange(0, self.count)
+
 
 if __name__ == "__main__":
     app = QApplication([])
@@ -49,5 +56,8 @@ if __name__ == "__main__":
     window.setCentralWidget(chartView)
     window.resize(800, 600)
     window.show()
+
+    # Update the chart
+    chart.update(50)
 
     app.exec_()
