@@ -1,13 +1,28 @@
-from abstract_classes.monitor import Monitor
+# from abstract_classes.monitor import Monitor
 
-class WaterMonitor(Monitor):
-    def __init__(self, sourceName):
-        super().__init__(sourceName, filePointer = None)
-    
+
+class WaterMonitor:
+    def __init__(self, sourceNames: list):
+        print("WaterMonitor __init__")
+        self.sourceNames = sourceNames
+
     def monitorCurrentLevel(self):
-        pass
+        """reads the water_levels.txt (index0) file and returns the value at last line"""
+        print("WaterMonitor.mointorCurrentLevel()")
+        with open(self.sourceNames[0], "r") as f:
+            f_contents = f.readlines()
+        return int(f_contents[-1])
 
     def monitorPurity(self):
-        pass
+        """reads the water_puritys.txt (index1) file and returns the value at last line"""
+        print("WaterMonitor.monitorPurity()")
+        with open(self.sourceNames[1], "r") as f:
+            f_contents = f.readlines()
+        return int(f_contents[-1])
 
 
+if __name__ == "__main__":
+    fileNames = ["./test/water_levels.txt", "./test/water_puritys.txt"]
+    w = WaterMonitor(fileNames)
+    print(w.monitorCurrentLevel())
+    print(w.monitorPurity())

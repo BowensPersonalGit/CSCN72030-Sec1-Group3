@@ -1,15 +1,16 @@
 # water tank class
-# an instance of this class will be created in main 
-from abstract_classes.abstractTank import abstractTank as Tank
+# an instance of this class will be created in main
+# from abstract_classes.abstractTank import abstractTank as Tank
+
+from WaterMonitor import WaterMonitor
 
 
-class WaterTank(Tank):
-    def __init__(self, file_name: list):
-        super().__int__()
-        self._purity = 0
-        self._waterMonitor = WaterMonitor(file_name[0])
-        self._waterController = WaterController(file_name[1])
-    
+class WaterTank:
+    def __init__(self, sourceNames: list):
+        self.waterMonitor = WaterMonitor(sourceNames)
+        self.purity = self.waterMonitor.monitorCurrentLevel()
+        self.current_level = self.waterMonitor.monitorPurity()
+
     # Getters and Setters
     def getCurrentLevel(self):
         return self.current_level
@@ -18,11 +19,13 @@ class WaterTank(Tank):
         self.current_level = value
 
     def getPurity(self):
-        return self._purity
+        return self.purity
 
     def setPurity(self, value):
-        self._purity = value
+        self.purity = value
 
-    
+
 if __name__ == "__main__":
-    pass
+    w = WaterTank(["./test/water_levels.txt", "./test/water_puritys.txt"])
+    print(w.getCurrentLevel())
+    print(w.getPurity())
