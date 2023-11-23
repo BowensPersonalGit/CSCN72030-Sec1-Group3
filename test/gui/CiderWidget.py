@@ -58,10 +58,30 @@ class CiderWidget(QFrame):
         # check if level target values are set
         if self.ciderControllerWidget.targetLevel is not None:
             if currentLevel < self.ciderControllerWidget.targetLevel:
-                self.ciderTank.setCurrentLevel(currentLevel + 1)
+                self.ciderTank.setCurrentLevel(currentLevel + 2)
+
                 #################################################
-                #TODO: decrement water and apple levels in the FILES
-                #hard code dat shit!
+                # decrement water and apple levels in the FILES
+                # ###############################################3
+
+                # open apple file and read value
+                with open("./test/apple_levels.txt", "r") as f:
+                    f_contents = f.readlines()
+                    currentAppleLevel = int(f_contents[-1])
+
+                # open apple file and append new value
+                with open("./test/apple_levels.txt", "a") as f:
+                    f.write(str(currentAppleLevel - 1) + "\n")
+
+                # open water file and read value
+                with open("./test/water_levels.txt", "r") as f:
+                    f_contents = f.readlines()
+                    currentWaterLevel = int(f_contents[-1])
+
+                # open apple file and append new value
+                with open("./test/water_levels.txt", "a") as f:
+                    f.write(str(currentWaterLevel - 1) + "\n")
+
                 ###################################################
             else:
                 self.ciderTank.setCurrentLevel(currentLevel - 1)
@@ -102,15 +122,14 @@ class CiderWidget(QFrame):
     def setPressureTarget(self, value):
         """Set the target pressure of the cider tank"""
         self.ciderControllerWidget.targetPressure = value
-    
+
     def setAlcoholTarget(self, value):
         """Set the target alcohol of the cider tank"""
         self.ciderControllerWidget.targetAlcohol = value
 
     def ferment(self):
         """Refill the cider tank - for refill button"""
-        self.setLevelTarget(99)
-
+        self.setLevelTarget(98)
 
 
 #
@@ -318,15 +337,15 @@ class CiderControllerWidget(QWidget):
     @property
     def targetLevel(self):
         return self._targetLevel
-    
+
     @targetLevel.setter
     def targetLevel(self, value):
         self._targetLevel = value
-    
+
     @property
     def targetPressure(self):
         return self._targetPressure
-    
+
     @targetPressure.setter
     def targetPressure(self, value):
         self._targetPressure = value
@@ -334,11 +353,10 @@ class CiderControllerWidget(QWidget):
     @property
     def targetAlcohol(self):
         return self._targetAlcohol
-    
+
     @targetAlcohol.setter
     def targetAlcohol(self, value):
         self._targetAlcohol = value
-
 
 
 if __name__ == "__main__":
