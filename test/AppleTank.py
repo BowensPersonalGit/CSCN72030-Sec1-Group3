@@ -24,9 +24,11 @@ class AppleTank:
         self.current_level = value
 
     def getConcentration(self):
+        self.concentration = self.appleMonitor.monitorConcentration()
         return self.concentration
 
     def setConcentration(self, value):
+        self.appleController.controlConcentration(value)
         self.concentration = value
     
     def update(self):
