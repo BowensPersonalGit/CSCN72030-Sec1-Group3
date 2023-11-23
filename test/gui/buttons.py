@@ -1,9 +1,12 @@
+# this class is used to create buttons for the GUI
+
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtCore import Qt
 
 
 class Button(QPushButton):
     def __init__(self, text: str):
+        """ creates a button with the given text"""
         super().__init__(text)
         self.setStyleSheet(
             """
@@ -22,6 +25,7 @@ class Button(QPushButton):
         self.setCursor(Qt.PointingHandCursor)
 
     def enable(self):
+        """ enables the button """
         self.setStyleSheet(
             """
                 *{
@@ -39,6 +43,7 @@ class Button(QPushButton):
         self.setCursor(Qt.PointingHandCursor)
 
     def disable(self):
+        """ disables the button """
         self.setStyleSheet(
             """
                 *{

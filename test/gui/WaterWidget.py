@@ -22,10 +22,11 @@ from WaterTank import WaterTank
 class WaterWidget(QFrame):
     def __init__(self, waterTank: WaterTank):
         super().__init__()
+        # create widgets
         self.waterTankWidget = WaterTankWidget()
         self.waterMonitorWidget = WaterMonitorWidget()
         self.waterControllerWidget = WaterControllerWidget()
-
+        # set frame properties
         self.setStyleSheet("background-color: rgb(216, 216, 214);")
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
         self.setLineWidth(3)
@@ -42,7 +43,6 @@ class WaterWidget(QFrame):
 
         # TANK OBJ HERE ##############
         self.waterTank = waterTank
-        # TANK OBJ HERE ##############
         self.update()
 
         #############button clicked events################
@@ -54,6 +54,7 @@ class WaterWidget(QFrame):
         """Update the GUI based on the target values and actual values"""
         currentLevel = self.waterTank.getCurrentLevel()
         currentPurity = self.waterTank.getPurity()
+
         # check if level target values are set
         if self.waterControllerWidget.targetLevel is not None:
             # check if actual values less than target values
@@ -73,6 +74,7 @@ class WaterWidget(QFrame):
             print("target water level target reached")
             self.waterControllerWidget.targetLevel = None
             self.waterControllerWidget.refillButton.enable()
+
         if self.waterControllerWidget.targetPurity == currentPurity:
             print("target water purity target reached")
             self.waterControllerWidget.targetPurity = None
@@ -283,8 +285,3 @@ class WaterControllerWidget(QWidget):
         self._targetPurity = value
 
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    win = WaterWidget()
-    win.show()
-    sys.exit(app.exec())

@@ -281,9 +281,3 @@ class GrapeControllerWidget(QWidget):
     def targetBacteria(self, value):
         self._targetBacteria = value
 
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    win = GrapeWidget()
-    win.show()
-    sys.exit(app.exec())

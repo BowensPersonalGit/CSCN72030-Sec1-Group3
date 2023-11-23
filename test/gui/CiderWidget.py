@@ -365,9 +365,3 @@ class CiderControllerWidget(QWidget):
     def targetAlcohol(self, value):
         self._targetAlcohol = value
 
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    win = CiderWidget()
-    win.show()
-    sys.exit(app.exec())

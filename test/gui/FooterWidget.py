@@ -21,7 +21,7 @@ class FooterWidget(QFrame):
         self.setStyleSheet("background-color: rgb(50, 50, 50);padding: 0px; margin: 0px;")
         # version label
         self.versionLabel = QLabel()
-        self.versionLabel.setText("Version 9999999999999")
+        self.versionLabel.setText("Version 69")
         self.versionLabel.setStyleSheet("color: white; font-size: 12px;")
         self.versionLabel.setAlignment(Qt.AlignRight)
 
