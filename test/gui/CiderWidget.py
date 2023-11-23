@@ -63,10 +63,12 @@ class CiderWidget(QFrame):
                 # decrement water and apple levels in the FILES
                 if self.takeApples(1) and self.takeWater(1):
                     self.ciderTank.setCurrentLevel(currentLevel + 2)
+                    self.ciderControllerWidget.fermentButton.disable()
                 else: # if not enough apples or water, stop fermentation
                     self.ciderControllerWidget.targetLevel = None
                     # popup window here
                     showPopup("Not enough apples or water", "Please refill the apples or water")
+                    self.ciderControllerWidget.fermentButton.enable()
             else:
                 self.ciderTank.setCurrentLevel(currentLevel - 1)
         # check if pressure target values are set
@@ -107,7 +109,7 @@ class CiderWidget(QFrame):
             currentAppleLevel = int(f_contents[-1])
 
         # check if there are enough apples
-        if self.ciderTank.getCurrentLevel() / 2 < currentAppleLevel:
+        if ((100 - (self.ciderTank.getCurrentLevel())) / 2) > currentAppleLevel:
             print("not enough apples")
             return False
 
@@ -125,7 +127,7 @@ class CiderWidget(QFrame):
             currentWaterLevel = int(f_contents[-1])
 
         # check if there is enough water
-        if self.ciderTank.getCurrentLevel() / 2 < currentWaterLevel:
+        if (100 - self.ciderTank.getCurrentLevel()) / 2 > currentWaterLevel:
             print("not enough water")
             return False
 
