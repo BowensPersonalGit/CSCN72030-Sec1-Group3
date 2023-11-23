@@ -262,9 +262,9 @@ class AppleControllerWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.refillButton = QPushButton("REFILL")
+        self.refillButton = Button("REFILL")
 
-        self.concentrateButton = QPushButton("CONCENTRATE")
+        self.concentrateButton =Button("CONCENTRATE")
         # add widgets to layout
         layout.addWidget(self.concentrateButton, 0, Qt.AlignTop | Qt.AlignCenter)
         layout.addWidget(self.refillButton, 0, Qt.AlignBottom | Qt.AlignCenter)

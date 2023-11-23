@@ -11,8 +11,10 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtChart import QChart, QChartView, QLineSeries, QValueAxis
 from .buttons import Button
-
+from .graph import Graph
+from .file_reader import readFromFile
 from WaterTank import WaterTank
 
 
@@ -48,6 +50,19 @@ class WaterWidget(QFrame):
         #############button clicked events################
         self.waterControllerWidget.refillButton.clicked.connect(self.refill)
         self.waterControllerWidget.purifyButton.clicked.connect(self.purify)
+
+    def showPurityGraph(self):
+        self.putityGraph = Graph(
+            "Water Purity", readFromFile(self.waterTank.waterMonitor.sourceNames[1])
+        )
+        self.graphWindow = QWidget()
+        self.graphWindow.setMinimumSize(600, 400)
+        self.graphWindowLayout = QVBoxLayout()
+        self.graphWindow.setLayout(self.graphWindowLayout)
+        self.graphWindowView = QChartView(self.putityGraph)
+        self.graphWindowLayout.addWidget(self.graphWindowView)
+
+        return self.graphWindow.show()
 
     # Update the GUI
     def update(self):
@@ -244,6 +259,13 @@ class WaterMonitorWidget(QFrame):
         self._purity = value
         self.purityLabel.setText(f"Water Purity: \n {self._purity} %")
 
+    def mouseDoubleClickEvent(self, event):
+        print("double clicked")
+        # show purity graph
+        self.parent().showPurityGraph()
+
+        
+
 
 #
 # widget for Controllers
@@ -283,5 +305,3 @@ class WaterControllerWidget(QWidget):
     @targetPurity.setter
     def targetPurity(self, value):
         self._targetPurity = value
-
-
