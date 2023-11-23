@@ -12,12 +12,14 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
 
+from AppleTank import AppleTank
+
 
 #
 # Main widget for Apple
 #
 class AppleWidget(QFrame):
-    def __init__(self):
+    def __init__(self, appleTank: AppleTank):
         super().__init__()
         self.appleTankWidget = AppleTankWidget()
         self.appleMonitorWidget = AppleMonitorWidget()
@@ -37,13 +39,62 @@ class AppleWidget(QFrame):
         layout.addWidget(self.appleControllerWidget, 0, Qt.AlignCenter | Qt.AlignBottom)
         layout.addWidget(self.appleTankWidget, 0, Qt.AlignCenter)
 
-    # Set the levels (PASS IN VALUES HERE)
-    def changeLevels(self, value):
-        self.appleTankWidget.level = value
+        # TANK OBJ HERE ##############
+        self.appleTank = appleTank
+        # TANK OBJ HERE ##############
+        self.update()
 
-    # Set the concentration (PASS IN VALUES HERE)
-    def changeConcentration(self, value):
-        self.appleMonitorWidget.concentration = value
+        #############button clicked events################
+        self.appleControllerWidget.refillButton.clicked.connect(self.refill)
+        self.appleControllerWidget.concentrateButton.clicked.connect(self.concentrate)
+
+    # Update the GUI
+    def update(self):
+        """Update the GUI based on the target values and actual values"""
+        currentLevel = self.appleTank.getCurrentLevel()
+        currentConcentration = self.appleTank.getConcentration()
+        # check if level target values are set
+        if self.appleControllerWidget.targetLevel is not None:
+            # check if actual values less than target values
+            if currentLevel < self.appleControllerWidget.targetLevel:
+                self.appleTank.setCurrentLevel(currentLevel + 1)
+            else:
+                self.appleTank.setCurrentLevel(currentLevel - 1)
+        # check if concentration target values are set
+        if self.appleControllerWidget.targetConcentration is not None:
+            if currentConcentration < self.appleControllerWidget.targetConcentration:
+                self.appleTank.setConcentration(currentConcentration + 1)
+            else:
+                self.appleTank.setConcentration(currentConcentration - 1)
+
+        # if target values are reached, set target values to None
+        if self.appleControllerWidget.targetLevel == currentLevel:
+            print("target apple level target reached")
+            self.appleControllerWidget.targetLevel = None
+        if self.appleControllerWidget.targetConcentration == currentConcentration:
+            print("target apple concentration target reached")
+            self.appleControllerWidget.targetConcentration = None
+
+        # update widgets to actual values
+        self.appleTankWidget.level = currentLevel
+        self.appleMonitorWidget.concentration = currentConcentration
+
+    # FOR SETTING TARGET VALUES
+    def setLevelTarget(self, value):
+        """Set the target level of the apple tank"""
+        self.appleControllerWidget.targetLevel = value
+
+    def setConcentrationTarget(self, value):
+        """Set the target purity of the apple tank"""
+        self.appleControllerWidget.targetConcentration = value
+
+    def refill(self):
+        """Refill the apple tank - for refill button"""
+        self.setLevelTarget(99)
+    
+    def concentrate(self):
+        """Concentrate the apple tank - for concentrate button"""
+        self.setConcentrationTarget(99)
 
 
 #
@@ -196,15 +247,35 @@ class AppleMonitorWidget(QFrame):
 class AppleControllerWidget(QWidget):
     def __init__(self):
         super().__init__()
+        # target values
+        self._targetLevel = None
+        self._targetConcentration = None
 
         # layout
         layout = QVBoxLayout()
         self.setLayout(layout)
 
         # buttons
-        self.button = QPushButton("REFILL TANK")
-        self.button.setCursor(Qt.PointingHandCursor)
-        self.button.setStyleSheet(
+        self.refillButton = QPushButton("REFILL TANK")
+        self.refillButton.setCursor(Qt.PointingHandCursor)
+        self.refillButton.setStyleSheet(
+            """
+            *{
+            background-color: rgb(47, 93, 140);
+            color: black;
+            font-size: 20px;
+            border-radius: 20px;
+            padding: 10px 20px;
+            }
+            *:hover{
+                background: rgb(213, 94, 45);
+                }
+            """
+        )
+
+        self.concentrateButton = QPushButton("CONCENTRATE")
+        self.concentrateButton.setCursor(Qt.PointingHandCursor)
+        self.concentrateButton.setStyleSheet(
             """
             *{
             background-color: rgb(47, 93, 140);
@@ -220,8 +291,26 @@ class AppleControllerWidget(QWidget):
         )
 
         # add widgets to layout
-        layout.addWidget(self.button, 0, Qt.AlignBottom | Qt.AlignCenter)
+        layout.addWidget(self.concentrateButton, 0, Qt.AlignTop | Qt.AlignCenter)
+        layout.addWidget(self.refillButton, 0, Qt.AlignBottom | Qt.AlignCenter)
 
+    # getters and setters
+    @property
+    def targetLevel(self):
+        return self._targetLevel
+    
+    @targetLevel.setter
+    def targetLevel(self, value):
+        self._targetLevel = value
+
+    @property
+    def targetConcentration(self):
+        return self._targetConcentration
+    
+    @targetConcentration.setter
+    def targetConcentration(self, value):
+        self._targetConcentration = value
+    
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -12,12 +12,14 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
 
+from WaterTank import WaterTank
+
 
 #
 # Main widget for Water
 #
 class WaterWidget(QFrame):
-    def __init__(self):
+    def __init__(self, waterTank: WaterTank):
         super().__init__()
         self.waterTankWidget = WaterTankWidget()
         self.waterMonitorWidget = WaterMonitorWidget()
@@ -37,13 +39,62 @@ class WaterWidget(QFrame):
         layout.addWidget(self.waterControllerWidget, 0, Qt.AlignCenter | Qt.AlignBottom)
         layout.addWidget(self.waterTankWidget, 0, Qt.AlignCenter)
 
-    # Set the levels (PASS IN VALUES HERE)
-    def changeLevels(self, value):
-        self.waterTankWidget.level = value
+        # TANK OBJ HERE ##############
+        self.waterTank = waterTank
+        # TANK OBJ HERE ##############
+        self.update()
 
-    # Set the purity (PASS IN VALUES HERE)
-    def changePurity(self, value):
-        self.waterMonitorWidget.purity = value
+        #############button clicked events################
+        self.waterControllerWidget.refillButton.clicked.connect(self.refill)
+        self.waterControllerWidget.purifyButton.clicked.connect(self.purify)
+
+    # Update the GUI
+    def update(self):
+        """Update the GUI based on the target values and actual values"""
+        currentLevel = self.waterTank.getCurrentLevel()
+        currentPurity = self.waterTank.getPurity()
+        # check if level target values are set
+        if self.waterControllerWidget.targetLevel is not None:
+            # check if actual values less than target values
+            if currentLevel < self.waterControllerWidget.targetLevel:
+                self.waterTank.setCurrentLevel(currentLevel + 1)
+            else:
+                self.waterTank.setCurrentLevel(currentLevel - 1)
+        # check if purity target values are set
+        if self.waterControllerWidget.targetPurity is not None:
+            if currentPurity < self.waterControllerWidget.targetPurity:
+                self.waterTank.setPurity(currentPurity + 1)
+            else:
+                self.waterTank.setPurity(currentPurity - 1)
+
+        # if target values are reached, set target values to None
+        if self.waterControllerWidget.targetLevel == currentLevel:
+            print("target water level target reached")
+            self.waterControllerWidget.targetLevel = None
+        if self.waterControllerWidget.targetPurity == currentPurity:
+            print("target water purity target reached")
+            self.waterControllerWidget.targetPurity = None
+
+        # update widgets to actual values
+        self.waterTankWidget.level = currentLevel
+        self.waterMonitorWidget.purity = currentPurity
+
+    # FOR SETTING TARGET VALUES
+    def setLevelTarget(self, value):
+        """Set the target level of the water tank"""
+        self.waterControllerWidget.targetLevel = value
+
+    def setPurityTarget(self, value):
+        """Set the target purity of the water tank"""
+        self.waterControllerWidget.targetPurity = value
+
+    def refill(self):
+        """Refill the water tank - for refill button"""
+        self.setLevelTarget(99)
+
+    def purify(self):
+        """Purify the water tank - for purify button"""
+        self.setPurityTarget(99)
 
 
 #
@@ -193,15 +244,34 @@ class WaterMonitorWidget(QFrame):
 class WaterControllerWidget(QWidget):
     def __init__(self):
         super().__init__()
+        # target values
+        self._targetLevel = None
+        self._targetPurity = None
 
         # layout
         layout = QVBoxLayout()
         self.setLayout(layout)
 
         # buttons
-        self.button = QPushButton("REFILL TANK")
-        self.button.setCursor(Qt.PointingHandCursor)
-        self.button.setStyleSheet(
+        self.refillButton = QPushButton("REFILL TANK")
+        self.refillButton.setCursor(Qt.PointingHandCursor)
+        self.refillButton.setStyleSheet(
+            """
+            *{
+            background-color: rgb(47, 93, 140);
+            color: black;
+            font-size: 20px;
+            border-radius: 20px;
+            padding: 10px 20px;
+            }
+            *:hover{
+                background: rgb(213, 94, 45);
+                }
+            """
+        )
+        self.purifyButton = QPushButton("PURIFY WATER")
+        self.purifyButton.setCursor(Qt.PointingHandCursor)
+        self.purifyButton.setStyleSheet(
             """
             *{
             background-color: rgb(47, 93, 140);
@@ -217,7 +287,25 @@ class WaterControllerWidget(QWidget):
         )
 
         # add widgets to layout
-        layout.addWidget(self.button, 0, Qt.AlignBottom | Qt.AlignCenter)
+        layout.addWidget(self.purifyButton, 0, Qt.AlignTop | Qt.AlignCenter)
+        layout.addWidget(self.refillButton, 0, Qt.AlignBottom | Qt.AlignCenter)
+
+    # getters and setters
+    @property
+    def targetLevel(self):
+        return self._targetLevel
+
+    @targetLevel.setter
+    def targetLevel(self, value):
+        self._targetLevel = value
+
+    @property
+    def targetPurity(self):
+        return self._targetPurity
+
+    @targetPurity.setter
+    def targetPurity(self, value):
+        self._targetPurity = value
 
 
 if __name__ == "__main__":
