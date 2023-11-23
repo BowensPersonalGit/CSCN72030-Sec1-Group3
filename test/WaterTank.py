@@ -10,8 +10,9 @@ class WaterTank:
     def __init__(self, sourceNames: list):
         self.waterMonitor = WaterMonitor(sourceNames)
         self.waterController = WaterController(sourceNames)
-        self.purity = self.waterMonitor.monitorCurrentLevel()
-        self.current_level = self.waterMonitor.monitorPurity()
+        self.purity = 0
+        self.current_level = 0
+        self.update()
 
     # Getters and Setters
     def getCurrentLevel(self):
