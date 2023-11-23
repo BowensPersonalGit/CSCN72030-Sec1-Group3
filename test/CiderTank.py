@@ -1,6 +1,6 @@
-from abstractTank import *
-from controller import *
-from monitor import *
+# from abstractTank import *
+# from controller import *
+# from monitor import *
 
 #CiderTank:
 #- alcohol - setter + getter - setAlcohol(value), getAlcohol()
@@ -22,10 +22,10 @@ class CiderMonitor():
             # Check if the file is not empty
             if lines:
                 # Return the last line
-                return lines[-1]
+                return int(lines[-1])
             else:
                 # If the file is empty it means we havnt brewed any Cider yet so we return 0
-                return "0"
+                return 0
     
 ## Backend File Writing for Cider Tank
 class CiderController():
@@ -36,7 +36,7 @@ class CiderController():
         # Open the file in append mode to add content without overwriting existing content
         with open(self.fileName, 'a') as file:
             # Write the value to the last line
-            file.write(value + '\n')
+            file.write(str(value) + '\n')
 
 ## Object the GUI interacts with:
 class CiderTank():
@@ -45,13 +45,13 @@ class CiderTank():
         self.alcController = CiderController("cideralcohol.txt")
         self.pressureMonitor = CiderMonitor("ciderpressure.txt")
         self.pressureController = CiderController("ciderpressure.txt")
-        self.volumeMonitor = CiderMonitor("cidervolume.txt")
-        self.volumeController = CiderController("cidervolume.txt")
+        self.levelMonitor = CiderMonitor("ciderlevel.txt")
+        self.levelController = CiderController("ciderlevel.txt")
         
-    def getAlcVolume(self):
+    def getAlcohol(self):
         return self.alcMonitor.getValue()
-
-    def setAlcVolume(self, value):
+    
+    def setAlcohol(self, value):
         self.alcController.setValue(value)
 
     def getPressure(self):
@@ -60,11 +60,11 @@ class CiderTank():
     def setPressure(self, value):
         self.pressureController.setValue(value)
 
-    def getVolume(self):
-        return self.volumeMonitor.getValue()
+    def getCurrentLevel(self):
+        return self.levelMonitor.getValue()
     
-    def setVolume(self, value):
-        self.volumeController.setValue(value)
+    def setCurrentLevel(self, value):
+        self.levelController.setValue(value)
 
 
 
@@ -72,12 +72,12 @@ class CiderTank():
 if __name__ == "__main__":
     
     ciderTank = CiderTank()
-    ciderTank.setAlcVolume("5.99%")
-    ciderTank.setPressure("11 PSI")
-    ciderTank.setVolume("1 MILLION Litres")
+    ciderTank.setAlcohol(10)
+    ciderTank.setPressure(11)
+    ciderTank.setCurrentLevel(12)
 
-    print(ciderTank.getAlcVolume())
+    print(ciderTank.getAlcohol())
     print(ciderTank.getPressure())
-    print(ciderTank.getVolume())
+    print(ciderTank.getCurrentLevel())
 
 ### Testing
