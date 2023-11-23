@@ -5,13 +5,13 @@ class WaterController():
         print("WaterController __init__")
         self.sourceNames = sourceNames
         
-    def changeCurrentLevel(self, value):
+    def controlCurrentLevel(self, value):
         print(f"WaterController.changeCurrentLevel({value})")
         with open(self.sourceNames[0], "a") as f:
             f.write(str(value) + "\n")
 
 
-    def changePurity(self, value):
+    def controlPurity(self, value):
         print(f"WaterController.changePurity({value})")
         with open(self.sourceNames[1], "a") as f:
             f.write(str(value) + "\n")

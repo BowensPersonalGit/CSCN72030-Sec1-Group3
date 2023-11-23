@@ -16,9 +16,11 @@ class WaterTank:
 
     # Getters and Setters
     def getCurrentLevel(self):
+        self.current_level = self.waterMonitor.monitorCurrentLevel()
         return self.current_level
 
     def setCurrentLevel(self, value):
+        self.waterController.controlCurrentLevel(value)
         self.current_level = value
 
     def getPurity(self):
@@ -38,8 +40,8 @@ if __name__ == "__main__":
     print(w.getCurrentLevel())
     print(w.getPurity())
 
-    w.waterController.changeCurrentLevel(85)
-    w.waterController.changePurity(85)
+    w.waterController.controlCurrentLevel(85)
+    w.waterController.controlPurity(85)
     w.update()
     print(w.getCurrentLevel())
     print(w.getPurity())
