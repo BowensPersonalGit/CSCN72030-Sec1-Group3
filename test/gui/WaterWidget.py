@@ -55,6 +55,9 @@ class WaterWidget(QFrame):
         self.waterControllerWidget.purifyButton.clicked.connect(self.purify)
 
     def showPurityGraph(self):
+        self.purityGraph = Graph(
+            "Water Purity", readFromFile(self.waterTank.waterMonitor.sourceNames[1])
+        )
         self.graphWindow = QWidget()
         self.graphWindow.setMinimumSize(600, 400)
         self.graphWindowLayout = QVBoxLayout()
