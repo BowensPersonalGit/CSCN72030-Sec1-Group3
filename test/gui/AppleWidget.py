@@ -12,6 +12,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
 
+from .buttons import Button
+
 from AppleTank import AppleTank
 
 
@@ -71,9 +73,11 @@ class AppleWidget(QFrame):
         if self.appleControllerWidget.targetLevel == currentLevel:
             print("target apple level target reached")
             self.appleControllerWidget.targetLevel = None
+            self.appleControllerWidget.refillButton.enable()
         if self.appleControllerWidget.targetConcentration == currentConcentration:
             print("target apple concentration target reached")
             self.appleControllerWidget.targetConcentration = None
+            self.appleControllerWidget.concentrateButton.enable()
 
         # update widgets to actual values
         self.appleTankWidget.level = currentLevel
@@ -90,11 +94,13 @@ class AppleWidget(QFrame):
 
     def refill(self):
         """Refill the apple tank - for refill button"""
-        self.setLevelTarget(99)
+        self.setLevelTarget(100)
+        self.appleControllerWidget.refillButton.disable()
     
     def concentrate(self):
         """Concentrate the apple tank - for concentrate button"""
-        self.setConcentrationTarget(99)
+        self.setConcentrationTarget(100)
+        self.appleControllerWidget.concentrateButton.disable()
 
 
 #
@@ -256,40 +262,9 @@ class AppleControllerWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.refillButton = QPushButton("REFILL TANK")
-        self.refillButton.setCursor(Qt.PointingHandCursor)
-        self.refillButton.setStyleSheet(
-            """
-            *{
-            background-color: rgb(47, 93, 140);
-            color: black;
-            font-size: 20px;
-            border-radius: 20px;
-            padding: 10px 20px;
-            }
-            *:hover{
-                background: rgb(213, 94, 45);
-                }
-            """
-        )
+        self.refillButton = QPushButton("REFILL")
 
         self.concentrateButton = QPushButton("CONCENTRATE")
-        self.concentrateButton.setCursor(Qt.PointingHandCursor)
-        self.concentrateButton.setStyleSheet(
-            """
-            *{
-            background-color: rgb(47, 93, 140);
-            color: black;
-            font-size: 20px;
-            border-radius: 20px;
-            padding: 10px 20px;
-            }
-            *:hover{
-                background: rgb(213, 94, 45);
-                }
-            """
-        )
-
         # add widgets to layout
         layout.addWidget(self.concentrateButton, 0, Qt.AlignTop | Qt.AlignCenter)
         layout.addWidget(self.refillButton, 0, Qt.AlignBottom | Qt.AlignCenter)

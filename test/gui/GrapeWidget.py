@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
-
+from .buttons import Button
 from GrapeTank import GrapeTank
 
 
@@ -71,9 +71,11 @@ class GrapeWidget(QFrame):
         if self.grapeControllerWidget.targetLevel == currentLevel:
             print("target grape level target reached")
             self.grapeControllerWidget.targetLevel = None
+            self.grapeControllerWidget.refillButton.enable()
         if self.grapeControllerWidget.targetBacteria == currentBacteria:
             print("target grape bacteria target reached")
             self.grapeControllerWidget.targetBacteria = None
+            self.grapeControllerWidget.cleanseButton.enable()
 
         # update widgets to actual values
         self.grapeTankWidget.level = currentLevel
@@ -90,11 +92,13 @@ class GrapeWidget(QFrame):
 
     def refill(self):
         """Refill the grape tank - for refill button"""
-        self.setLevelTarget(99)
+        self.setLevelTarget(100)
+        self.grapeControllerWidget.refillButton.disable()
 
     def cleanse(self):
         """cleanse the grape tank of bacteria - for cleanse button"""
-        self.setBacteriaTarget(99)
+        self.setBacteriaTarget(100)
+        self.grapeControllerWidget.cleanseButton.disable()
 
 
 #
@@ -254,37 +258,7 @@ class GrapeControllerWidget(QWidget):
 
         # buttons
         self.refillButton = QPushButton("REFILL TANK")
-        self.refillButton.setCursor(Qt.PointingHandCursor)
-        self.refillButton.setStyleSheet(
-            """
-            *{
-            background-color: rgb(47, 93, 140);
-            color: black;
-            font-size: 20px;
-            border-radius: 20px;
-            padding: 10px 20px;
-            }
-            *:hover{
-                background: rgb(213, 94, 45);
-                }
-            """
-        )
-        self.cleanseButton = QPushButton("CLEANSE")
-        self.cleanseButton.setCursor(Qt.PointingHandCursor)
-        self.cleanseButton.setStyleSheet(
-            """
-            *{
-            background-color: rgb(47, 93, 140);
-            color: black;
-            font-size: 20px;
-            border-radius: 20px;
-            padding: 10px 20px;
-            }
-            *:hover{
-                background: rgb(213, 94, 45);
-                }
-            """
-        )
+        self.cleanseButton = QPushButton("CLEANSE TANK")
 
         # add widgets to layout
         layout.addWidget(self.cleanseButton, 0, Qt.AlignTop | Qt.AlignCenter)

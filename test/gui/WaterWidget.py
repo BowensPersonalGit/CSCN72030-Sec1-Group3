@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
+from .buttons import Button
 
 from WaterTank import WaterTank
 
@@ -71,9 +72,11 @@ class WaterWidget(QFrame):
         if self.waterControllerWidget.targetLevel == currentLevel:
             print("target water level target reached")
             self.waterControllerWidget.targetLevel = None
+            self.waterControllerWidget.refillButton.enable()
         if self.waterControllerWidget.targetPurity == currentPurity:
             print("target water purity target reached")
             self.waterControllerWidget.targetPurity = None
+            self.waterControllerWidget.purifyButton.enable()
 
         # update widgets to actual values
         self.waterTankWidget.level = currentLevel
@@ -90,11 +93,13 @@ class WaterWidget(QFrame):
 
     def refill(self):
         """Refill the water tank - for refill button"""
-        self.setLevelTarget(99)
+        self.setLevelTarget(100)
+        self.waterControllerWidget.refillButton.disable()
 
     def purify(self):
         """Purify the water tank - for purify button"""
-        self.setPurityTarget(99)
+        self.setPurityTarget(100)
+        self.waterControllerWidget.purifyButton.disable()
 
 
 #
@@ -253,38 +258,8 @@ class WaterControllerWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.refillButton = QPushButton("REFILL TANK")
-        self.refillButton.setCursor(Qt.PointingHandCursor)
-        self.refillButton.setStyleSheet(
-            """
-            *{
-            background-color: rgb(47, 93, 140);
-            color: black;
-            font-size: 20px;
-            border-radius: 20px;
-            padding: 10px 20px;
-            }
-            *:hover{
-                background: rgb(213, 94, 45);
-                }
-            """
-        )
-        self.purifyButton = QPushButton("PURIFY WATER")
-        self.purifyButton.setCursor(Qt.PointingHandCursor)
-        self.purifyButton.setStyleSheet(
-            """
-            *{
-            background-color: rgb(47, 93, 140);
-            color: black;
-            font-size: 20px;
-            border-radius: 20px;
-            padding: 10px 20px;
-            }
-            *:hover{
-                background: rgb(213, 94, 45);
-                }
-            """
-        )
+        self.refillButton = Button("REFILL WATER")
+        self.purifyButton = Button("PURIFY WATER")
 
         # add widgets to layout
         layout.addWidget(self.purifyButton, 0, Qt.AlignTop | Qt.AlignCenter)

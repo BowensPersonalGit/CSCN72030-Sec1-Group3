@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
 from .warning_popup import showPopup
+from .buttons import Button
 
 from CiderTank import CiderTank
 
@@ -85,6 +86,7 @@ class CiderWidget(QFrame):
         if self.ciderControllerWidget.targetLevel == currentLevel:
             print("target cider level target reached")
             self.ciderControllerWidget.targetLevel = None
+            self.ciderControllerWidget.fermentButton.enable()
         if self.ciderControllerWidget.targetPressure == currentPressure:
             print("target cider pressure target reached")
             self.ciderControllerWidget.targetPressure = None
@@ -148,7 +150,8 @@ class CiderWidget(QFrame):
 
     def ferment(self):
         """Refill the cider tank - for refill button"""
-        self.setLevelTarget(98)
+        self.setLevelTarget(100)
+        self.ciderControllerWidget.fermentButton.disable()
 
 
 #
@@ -332,22 +335,7 @@ class CiderControllerWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.fermentButton = QPushButton("START\nFERMENTATION")
-        self.fermentButton.setCursor(Qt.PointingHandCursor)
-        self.fermentButton.setStyleSheet(
-            """
-            *{
-            background-color: rgb(47, 93, 140);
-            color: black;
-            font-size: 20px;
-            border-radius: 20px;
-            padding: 10px 20px;
-            }
-            *:hover{
-                background: rgb(213, 94, 45);
-                }
-            """
-        )
+        self.fermentButton = Button("FERMENT")
 
         # add widgets to layout
         layout.addWidget(self.fermentButton, 0, Qt.AlignBottom | Qt.AlignCenter)

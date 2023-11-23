@@ -13,6 +13,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
 
+from .buttons import Button
+
 from WineTank import WineTank
 
 
@@ -80,6 +82,7 @@ class WineWidget(QFrame):
         if self.wineControllerWidget.targetLevel == currentLevel:
             print("target wine level target reached")
             self.wineControllerWidget.targetLevel = None
+            self.wineControllerWidget.refillButton.enable()
         if self.wineControllerWidget.targetPressure == currentPressure:
             print("target wine pressure target reached")
             self.wineControllerWidget.targetPressure = None
@@ -107,7 +110,8 @@ class WineWidget(QFrame):
 
     def ferment(self):
         """Refill the wine tank - for refill button"""
-        self.setLevelTarget(99)
+        self.setLevelTarget(100)
+        self.wineControllerWidget.fermentButton.disable()
 
 
 #
@@ -291,22 +295,7 @@ class WineControllerWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.fermentButton = QPushButton("START\nFERMENTATION")
-        self.fermentButton.setCursor(Qt.PointingHandCursor)
-        self.fermentButton.setStyleSheet(
-            """
-            *{
-            background-color: rgb(47, 93, 140);
-            color: black;
-            font-size: 20px;
-            border-radius: 20px;
-            padding: 10px 20px;
-            }
-            *:hover{
-                background: rgb(213, 94, 45);
-                }
-            """
-        )
+        self.fermentButton = Button("FERMENT")
 
         # add widgets to layout
         layout.addWidget(self.fermentButton, 0, Qt.AlignBottom | Qt.AlignCenter)
