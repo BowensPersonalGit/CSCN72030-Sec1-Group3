@@ -48,6 +48,4 @@ timer = QTimer()
 timer.timeout.connect(main.update) 
 timer.start(500)  
 
-
-
 sys.exit(app.exec())

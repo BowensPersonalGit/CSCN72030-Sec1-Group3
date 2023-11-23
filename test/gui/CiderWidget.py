@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
+from .warning_popup import showPopup
 
 from CiderTank import CiderTank
 
@@ -58,31 +59,13 @@ class CiderWidget(QFrame):
         # check if level target values are set
         if self.ciderControllerWidget.targetLevel is not None:
             if currentLevel < self.ciderControllerWidget.targetLevel:
-                self.ciderTank.setCurrentLevel(currentLevel + 2)
-
-                #################################################
                 # decrement water and apple levels in the FILES
-                # ###############################################3
-
-                # open apple file and read value
-                with open("./test/apple_levels.txt", "r") as f:
-                    f_contents = f.readlines()
-                    currentAppleLevel = int(f_contents[-1])
-
-                # open apple file and append new value
-                with open("./test/apple_levels.txt", "a") as f:
-                    f.write(str(currentAppleLevel - 1) + "\n")
-
-                # open water file and read value
-                with open("./test/water_levels.txt", "r") as f:
-                    f_contents = f.readlines()
-                    currentWaterLevel = int(f_contents[-1])
-
-                # open apple file and append new value
-                with open("./test/water_levels.txt", "a") as f:
-                    f.write(str(currentWaterLevel - 1) + "\n")
-
-                ###################################################
+                if self.takeApples(1) and self.takeWater(1):
+                    self.ciderTank.setCurrentLevel(currentLevel + 2)
+                else: # if not enough apples or water, stop fermentation
+                    self.ciderControllerWidget.targetLevel = None
+                    # popup window here
+                    showPopup("Not enough apples or water", "Please refill the apples or water")
             else:
                 self.ciderTank.setCurrentLevel(currentLevel - 1)
         # check if pressure target values are set
@@ -113,6 +96,42 @@ class CiderWidget(QFrame):
         self.ciderTankWidget.level = currentLevel
         self.ciderMonitorWidget.pressure = currentPressure
         self.ciderMonitorWidget.alcohol = currentAlcohol
+
+    # take apples from apple tank, return false if not enough apples
+    def takeApples(self, value):
+        # open apple file and read value
+        with open("./test/apple_levels.txt", "r") as f:
+            f_contents = f.readlines()
+            currentAppleLevel = int(f_contents[-1])
+
+        # check if there are enough apples
+        if self.ciderTank.getCurrentLevel() / 2 < currentAppleLevel:
+            print("not enough apples")
+            return False
+
+        # open apple file and append new value
+        with open("./test/apple_levels.txt", "a") as f:
+            f.write(str(currentAppleLevel - value) + "\n")
+        
+        return True
+
+    # take water from water tank, return false if not enough water
+    def takeWater(self, value):
+        # open water file and read value
+        with open("./test/water_levels.txt", "r") as f:
+            f_contents = f.readlines()
+            currentWaterLevel = int(f_contents[-1])
+
+        # check if there is enough water
+        if self.ciderTank.getCurrentLevel() / 2 < currentWaterLevel:
+            print("not enough water")
+            return False
+
+        # open apple file and append new value
+        with open("./test/water_levels.txt", "a") as f:
+            f.write(str(currentWaterLevel - value) + "\n")
+        
+        return True
 
     # FOR SETTING TARGET VALUES
     def setLevelTarget(self, value):
