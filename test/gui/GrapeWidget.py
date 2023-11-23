@@ -11,21 +11,19 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer
-from abstract_classes.abstractTank import Tank
 
-from grapeTank import grapeTank
-
+from GrapeTank import GrapeTank
 
 
 #
 # Main widget for Grape
 #
 class GrapeWidget(QFrame):
-    def __init__(self):
+    def __init__(self, grapeTank: GrapeTank):
         super().__init__()
         self.grapeTankWidget = GrapeTankWidget()
         self.grapeMonitorWidget = GrapeMonitorWidget()
-        self.grapeControllerWidget = GrapeControllerWidget(grapeTank("grapeLevel.txt", "grapeBacteria.txt", self))
+        self.grapeControllerWidget = GrapeControllerWidget()
 
         self.setStyleSheet("background-color: rgb(216, 216, 214);")
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
@@ -41,13 +39,62 @@ class GrapeWidget(QFrame):
         layout.addWidget(self.grapeControllerWidget, 0, Qt.AlignCenter | Qt.AlignBottom)
         layout.addWidget(self.grapeTankWidget, 0, Qt.AlignCenter)
 
-    # Set the levels (PASS IN VALUES HERE)
-    def changeLevels(self, value):
-        self.grapeTankWidget.level = value
+        # TANK OBJ HERE ##############
+        self.grapeTank = grapeTank
+        # TANK OBJ HERE ##############
+        self.update()
 
-    # Set the concentration (PASS IN VALUES HERE)
-    def changeBacteria(self, value):
-        self.grapeMonitorWidget.bacteria = value
+        #############button clicked events################
+        self.grapeControllerWidget.refillButton.clicked.connect(self.refill)
+        self.grapeControllerWidget.cleanseButton.clicked.connect(self.cleanse)
+
+    # Update the GUI
+    def update(self):
+        """Update the GUI based on the target values and actual values"""
+        currentLevel = self.grapeTank.getCurrentLevel()
+        currentBacteria = self.grapeTank.getBacteria()
+        # check if level target values are set
+        if self.grapeControllerWidget.targetLevel is not None:
+            # check if actual values less than target values
+            if currentLevel < self.grapeControllerWidget.targetLevel:
+                self.grapeTank.setCurrentLevel(currentLevel + 1)
+            else:
+                self.grapeTank.setCurrentLevel(currentLevel - 1)
+        # check if bacteria target values are set
+        if self.grapeControllerWidget.targetBacteria is not None:
+            if currentBacteria < self.grapeControllerWidget.targetBacteria:
+                self.grapeTank.setBacteria(currentBacteria + 1)
+            else:
+                self.grapeTank.setBacteria(currentBacteria - 1)
+
+        # if target values are reached, set target values to None
+        if self.grapeControllerWidget.targetLevel == currentLevel:
+            print("target grape level target reached")
+            self.grapeControllerWidget.targetLevel = None
+        if self.grapeControllerWidget.targetBacteria == currentBacteria:
+            print("target grape bacteria target reached")
+            self.grapeControllerWidget.targetBacteria = None
+
+        # update widgets to actual values
+        self.grapeTankWidget.level = currentLevel
+        self.grapeMonitorWidget.bacteria = currentBacteria
+
+    # FOR SETTING TARGET VALUES
+    def setLevelTarget(self, value):
+        """Set the target level of the grape tank"""
+        self.grapeControllerWidget.targetLevel = value
+
+    def setBacteriaTarget(self, value):
+        """Set the target bacteria of the grape tank"""
+        self.grapeControllerWidget.targetBacteria = value
+
+    def refill(self):
+        """Refill the grape tank - for refill button"""
+        self.setLevelTarget(99)
+
+    def cleanse(self):
+        """cleanse the grape tank of bacteria - for cleanse button"""
+        self.setBacteriaTarget(99)
 
 
 #
@@ -195,18 +242,19 @@ class GrapeMonitorWidget(QFrame):
 # widget for Controllers
 #
 class GrapeControllerWidget(QWidget):
-    def __init__(self, grapeTank):
+    def __init__(self):
         super().__init__()
+        # target values
+        self._targetLevel = None
+        self._targetBacteria = None
+
         # layout
         layout = QVBoxLayout()
         self.setLayout(layout)
-        self.Tank = grapeTank
-        self.expectedLinePtr = 0
-        self.expectedBacteriaLinePtr = 0
+
         # buttons
         self.refillButton = QPushButton("REFILL TANK")
         self.refillButton.setCursor(Qt.PointingHandCursor)
-        self.replaceActive = False;
         self.refillButton.setStyleSheet(
             """
             *{
@@ -221,9 +269,9 @@ class GrapeControllerWidget(QWidget):
                 }
             """
         )
-        self.replaceButton = QPushButton("REPLACE GRAPES")
-        self.replaceButton.setCursor(Qt.PointingHandCursor)
-        self.replaceButton.setStyleSheet(
+        self.cleanseButton = QPushButton("CLEANSE")
+        self.cleanseButton.setCursor(Qt.PointingHandCursor)
+        self.cleanseButton.setStyleSheet(
             """
             *{
             background-color: rgb(47, 93, 140);
@@ -238,54 +286,27 @@ class GrapeControllerWidget(QWidget):
             """
         )
 
-        self.refillButton.clicked.connect(self.refillTank)
-        self.replaceButton.clicked.connect(self.replaceGrapesFirst)
         # add widgets to layout
-        layout.addWidget(self.replaceButton, 0, Qt.AlignBottom | Qt.AlignCenter)
+        layout.addWidget(self.cleanseButton, 0, Qt.AlignTop | Qt.AlignCenter)
         layout.addWidget(self.refillButton, 0, Qt.AlignBottom | Qt.AlignCenter)
-    def refillTank(self):
-        self.expectedLinePtr = 10
-        self.expectedBacteriaLinePtr = 100
-        
-    def replaceGrapesFirst(self):
-        self.replaceActive = True
-        self.expectedLinePtr = 0
-        self.expectedBacteriaLinePtr = 0
 
-    def replaceGrapesSecond(self):
-        self.replaceActive = False
-        self.refillTank()
-        self.expectedBacteriaLinePtr = 100
-        
-    def incrementCurrentLevel(self):
-        if(self.Tank.getLinePtrValue() < self.expectedLinePtr):
-            self.Tank.setCurrentLevel(self.Tank.getLinePtrValue() + 1)
-            
-        elif(self.Tank.getLinePtrValue() > self.expectedLinePtr):
-            self.Tank.setCurrentLevel(self.Tank.getLinePtrValue() - 1)
-            
-        if(self.replaceActive and self.Tank.getLinePtrValue() == 0):
-            self.replaceGrapesSecond()
-            
-    def incrementBacteriaLevel(self):
-        if(self.Tank.getBacteriaLinePtrValue() < self.expectedBacteriaLinePtr):
-            self.Tank.setBacteriaLevel(self.Tank.getBacteriaLinePtrValue() + 1)
-            
-        elif(self.Tank.getBacteriaLinePtrValue() > self.expectedBacteriaLinePtr):
-            self.Tank.setBacteriaLevel(self.Tank.getBacteriaLinePtrValue() - 10)
-            
-        if(self.Tank.getBacteriaLinePtrValue() < 0):
-            self.Tank.setBacteriaLevel(0)
-    
-    def returnCurrentLevel(self):
-        return self.Tank.getCurrentLevel()
-    
-    def returnBacteriaLevel(self):
-        return self.Tank.getBacteriaLevel()
-    
-        
-            
-        
+    # Getters and Setters
+    @property
+    def targetLevel(self):
+        return self._targetLevel
+
+    @targetLevel.setter
+    def targetLevel(self, value):
+        self._targetLevel = value
+
+    @property
+    def targetBacteria(self):
+        return self._targetBacteria
+
+    @targetBacteria.setter
+    def targetBacteria(self, value):
+        self._targetBacteria = value
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

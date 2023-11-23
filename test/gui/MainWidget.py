@@ -10,13 +10,14 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QTimer
 
-# relative path for imports
-if __name__ != "__main__":
-    from .WaterWidget import WaterWidget
-    from .WineWidget import WineWidget
-    from .CiderWidget import CiderWidget
-    from .GrapeWidget import GrapeWidget
-    from .AppleWidget import AppleWidget
+# import WIDGETS
+from .WaterWidget import WaterWidget
+from .WineWidget import WineWidget
+from .CiderWidget import CiderWidget
+from .GrapeWidget import GrapeWidget
+from .AppleWidget import AppleWidget
+# import TANKS
+from WaterTank import WaterTank
 
 
 #
@@ -38,7 +39,9 @@ class MainWidget(QFrame):
         self.setLayout(layout)
 
         # widgets
-        self.waterWidget = WaterWidget()
+        self.waterWidget = WaterWidget(
+            WaterTank(["./test/water_levels.txt", "./test/water_puritys.txt"])
+        )
         self.wineWidget = WineWidget()
         self.ciderWidget = CiderWidget()
         self.appleWidget = AppleWidget()
@@ -50,36 +53,13 @@ class MainWidget(QFrame):
         layout.addWidget(self.waterWidget)
         layout.addWidget(self.wineWidget)
         layout.addWidget(self.grapeWidget)
+    
+    def update(self):
+        """Update all the widgets in the main widget"""
+        print("MainWidget.update()")
+        self.waterWidget.update()
+        # self.wineWidget.update()
+        # self.ciderWidget.update()
+        # self.appleWidget.update()
+        # self.grapeWidget.update()
 
-
-if __name__ == "__main__":
-    # test code
-    from WaterWidget import WaterWidget
-    from WineWidget import WineWidget
-    from CiderWidget import CiderWidget
-    from GrapeWidget import GrapeWidget
-    from AppleWidget import AppleWidget
-
-    app = QApplication(sys.argv)
-    win = MainWidget()
-    win.show()
-
-    counter = 0
-
-    def increment_level():
-        global counter
-        win.waterWidget.changeLevels(counter)
-        win.wineWidget.changeLevels(counter)
-        win.ciderWidget.changeLevels(counter)
-        win.appleWidget.changeLevels(counter)
-        win.grapeWidget.changeLevels(counter)
-        counter += 5
-
-    # Create a QTimer
-    timer = QTimer()
-    timer.timeout.connect(
-        increment_level
-    )  # Connect timeout signal to increment_level slot
-    timer.start(1000)  # Set the timer to time out every second
-
-    sys.exit(app.exec())
