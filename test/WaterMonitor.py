@@ -24,5 +24,5 @@ class WaterMonitor:
 if __name__ == "__main__":
     fileNames = ["./test/water_levels.txt", "./test/water_puritys.txt"]
     w = WaterMonitor(fileNames)
-    print(w.monitorCurrentLevel())
-    print(w.monitorPurity())
+    print(f"currentlevel:{w.monitorCurrentLevel()}")
+    print(f"purity:{w.monitorPurity()}")

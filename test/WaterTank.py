@@ -3,11 +3,13 @@
 # from abstract_classes.abstractTank import abstractTank as Tank
 
 from WaterMonitor import WaterMonitor
+from WaterController import WaterController
 
 
 class WaterTank:
     def __init__(self, sourceNames: list):
         self.waterMonitor = WaterMonitor(sourceNames)
+        self.waterController = WaterController(sourceNames)
         self.purity = self.waterMonitor.monitorCurrentLevel()
         self.current_level = self.waterMonitor.monitorPurity()
 
@@ -27,5 +29,11 @@ class WaterTank:
 
 if __name__ == "__main__":
     w = WaterTank(["./test/water_levels.txt", "./test/water_puritys.txt"])
+    print(w.getCurrentLevel())
+    print(w.getPurity())
+
+    w.waterController.changeCurrentLevel(85)
+    w.waterController.changePurity(85)
+
     print(w.getCurrentLevel())
     print(w.getPurity())
