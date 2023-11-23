@@ -24,9 +24,11 @@ class WaterTank:
         self.current_level = value
 
     def getPurity(self):
+        self.purity = self.waterMonitor.monitorPurity()
         return self.purity
 
     def setPurity(self, value):
+        self.waterController.controlPurity(value)
         self.purity = value
     
     def update(self):
