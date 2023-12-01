@@ -1,22 +1,24 @@
-from abstract_classes.monitor import Monitor
-from grapeController import grapeController
-from grapeMonitor import grapeMonitor
-from abstract_classes.abstractTank import Tank
+# from abstract_classes.abstractTank import Tank
+from grapeController import GrapeController
+from grapeMonitor import GrapeMonitor
 
-class grapeTank(Tank):
-    def __init__(self, current_level_file, grapeBacteria_File, grapeWidget):
-        self.controller = grapeController()
-        self.monitor = grapeMonitor(current_level_file, grapeBacteria_File)
-        self.grapeWidget = grapeWidget
-        self._lvlFileLine = 0
-        self._bacteriaFileLine = 0
-        
+
+class GrapeTank:
+    def __init__(self, Level_File, Bacteria_File):
+        self.controller = GrapeController(Level_File, Bacteria_File)
+        self.monitor = GrapeMonitor(Level_File, Bacteria_File)
+        self._currentLevel = 0
+        self._bacteria = 0
+        self.update()
+
     def getCurrentLevel(self):
-        return self.monitor.monitorCurrentLevel(self._lvlFileLine)
+        self._current_level = self.monitor.monitorCurrentLevel()
+        return self._current_level
 
     def getBacteriaLevel(self):
-        return self.monitor.monitorBacteriaLevel(self._bacteriaFileLine)
-    
+        self._bacteria = self.monitor.monitorBacteriaLevel()
+        return self._bacteria
+
     def getLinePtrValue(self):
         return self._lvlFileLine
 
@@ -24,8 +26,13 @@ class grapeTank(Tank):
         return self._bacteriaFileLine
 
     def setCurrentLevel(self, newLevel):
-        self._lvlFileLine = self.controller.changeCurrentLevel(newLevel)
-        
+        self.controller.changeCurrentLevel(newLevel)
+        self._currentLevel = newLevel
+
     def setBacteriaLevel(self, newLevel):
-        self._bacteriaFileLine = self.controller.changeBacteriaLevel(newLevel)
+        self.controller.changeBacteriaLevel(newLevel)
+        self._bacteria = newLevel
     
+    def update(self):
+        self._currentLevel = self.monitor.monitorCurrentLevel()
+        self._bacteria = self.monitor.monitorBacteriaLevel()

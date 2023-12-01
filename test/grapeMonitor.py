@@ -1,23 +1,16 @@
-from abc import abstractmethod
-from abstract_classes.monitor import Monitor
-
-class grapeMonitor(Monitor):
+class GrapeMonitor():
     def __init__(self, Level_File, Bacteria_File):
         self.Level_File = Level_File
         self.Bacteria_File = Bacteria_File
         
-    def monitorCurrentLevel(self, linePtr):
+    def monitorCurrentLevel(self):
         with open (self.Level_File, "r") as file:
-            lines = file.readlines()
-            numbers_from_file = [int(line.strip()) for line in lines]
-            
-        return numbers_from_file[linePtr]
+            lines = file.readlines()     
+        return float(lines[-1])
     
-    def monitorBacteriaLevel(self, linePtr):
+    def monitorBacteriaLevel(self):
         with open (self.Bacteria_File, "r") as file:
             lines = file.readlines()
-            numbers_from_file = [int(line.strip()) for line in lines]
-            
-        return numbers_from_file[linePtr]
+        return float(lines[-1])
 
     
