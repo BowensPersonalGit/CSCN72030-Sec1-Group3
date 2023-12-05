@@ -3,7 +3,7 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PyQt5.QtChart import QChart, QChartView, QLineSeries, QValueAxis
 from PyQt5.QtGui import QPainter
-from PyQt5.QtCore import QPoint, QTimer
+from PyQt5.QtCore import QPoint, QTimer, QPointF
 
 
 class Graph(QChart):
@@ -20,7 +20,7 @@ class Graph(QChart):
         self.lineSeries = QLineSeries()
         self.valuesLen = len(values)
         for i in range(self.valuesLen):
-            self.lineSeries.append(QPoint(i, values[i]))
+            self.lineSeries.append(QPointF(i, values[i]))
             self.count += 1
 
         self.addSeries(self.lineSeries)
@@ -33,9 +33,20 @@ class Graph(QChart):
 
     def update(self, value):
         """Update the chart with a new value"""
-        self.lineSeries.append(QPoint(self.count, value))
+        self.lineSeries.append(QPointF(self.count, value))
         self.count += 1
         self.xAxis.setRange(0, self.count)
+
+
+class GraphWindow(QWidget):
+    def __init__(self, graph: Graph):
+        super().__init__()
+        self.graph = graph
+        self.setMinimumSize(600, 400)
+        self.windowLayout = QVBoxLayout()
+        self.setLayout(self.windowLayout)
+        self.chartView = QChartView(self.graph)
+        self.windowLayout.addWidget(self.chartView)
 
 
 if __name__ == "__main__":

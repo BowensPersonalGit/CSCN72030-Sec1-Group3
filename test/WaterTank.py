@@ -34,9 +34,7 @@ class WaterTank:
     def update(self):
         """Update values from the water monitor"""
         self.current_level = self.waterMonitor.monitorCurrentLevel()
-        print("water current level: ", self.current_level)
         self.purity = self.waterMonitor.monitorPurity()
-        print("water purity: ", self.purity)
 
 
 if __name__ == "__main__":

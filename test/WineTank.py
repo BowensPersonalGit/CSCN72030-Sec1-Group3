@@ -7,6 +7,10 @@
 # - pressure - setter + getter - setPressure(value), getPressure()
 # - current_level - setter + getter - setCurrentLevel(value), getCurrentLevel()
 
+# filepaths
+grapeFile = "./test/grapeLevel.txt"
+waterFile = "./test/water_levels.txt"
+
 
 ## Backend File Reading for Wine Tank
 class WineMonitor:
@@ -21,7 +25,7 @@ class WineMonitor:
             # Check if the file is not empty
             if lines:
                 # Return the last line
-                return int(lines[-1])
+                return float(lines[-1])
             else:
                 # If the file is empty it means we havnt brewed any Wine yet so we return 0
                 return 0
@@ -67,6 +71,52 @@ class WineTank:
     def setCurrentLevel(self, value):
         self.levelController.setValue(value)
 
+    def takeGrape(self, value):
+        """takes grapes from grape tank and adds them to wine tank"""
+        with open(grapeFile, "r") as f:
+            f_contents = f.readlines()
+            currentGrapeLevel = float(f_contents[-1])
+
+        with open(grapeFile, "a") as f:
+            f.write(str(currentGrapeLevel - value) + "\n")
+
+        with open(self.levelController.fileName, "a") as f:
+            f.write(str(self.getCurrentLevel() + value) + "\n")
+
+    def takeWater(self, value):
+        """takes water from water file and add it into wine tank"""
+        # open water file and read value
+        with open(waterFile, "r") as f:
+            f_contents = f.readlines()
+            currentWaterLevel = float(f_contents[-1])
+
+        # open apple file and append new value
+        with open(waterFile, "a") as f:
+            f.write(str(currentWaterLevel - value) + "\n")
+
+        # open cider file and append new value
+        with open(self.levelController.fileName, "a") as f:
+            f.write(str(self.getCurrentLevel() + value) + "\n")
+    
+    def checkGrape(self, value):
+        """checks if there is enough grapes to take"""
+        with open(grapeFile, "r") as f:
+            f_contents = f.readlines()
+            currentGrapeLevel = float(f_contents[-1])
+            if currentGrapeLevel - value < 0:
+                return False
+            else:
+                return True
+        
+    def checkWater(self, value):
+        """checks if there is enough water to take"""
+        with open(waterFile, "r") as f:
+            f_contents = f.readlines()
+            currentWaterLevel = float(f_contents[-1])
+            if currentWaterLevel - value < 0:
+                return False
+            else:
+                return True
 
 ### Testing
 if __name__ == "__main__":

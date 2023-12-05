@@ -1,162 +1,209 @@
 # Wine widget
 import sys
 
-from PyQt5.QtWidgets import (
-    QApplication,
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QLabel,
-    QFrame,
-)
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame, QDialog
 from PyQt5.QtGui import QPainter, QColor, QPen
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt
+
 from .warning_popup import showPopup
 from .buttons import Button
+from .InputDialog import InputDialog
+from .graph import Graph, GraphWindow
+
 
 from WineTank import WineTank
 
 
-#
-# Main widget for Wine
-#
 class WineWidget(QFrame):
+    """Main widget for Wine"""
+
     def __init__(self, wineTank: WineTank):
+        """Creates a wine widget with a wine tank object"""
         super().__init__()
-        self.wineTankWidget = WineTankWidget()
-        self.wineMonitorWidget = WineMonitorWidget()
-        self.wineControllerWidget = WineControllerWidget()
-
-        self.setStyleSheet("background-color: rgb(216, 216, 214);")
-        self.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
-        self.setLineWidth(3)
-        self.setMidLineWidth(3)
-
-        # define layout
-        layout = QVBoxLayout()
-        self.setLayout(layout)
-
-        # add widgets to layout
-        layout.addWidget(self.wineMonitorWidget, 0, Qt.AlignCenter)
-        layout.addWidget(self.wineControllerWidget, 0, Qt.AlignCenter | Qt.AlignBottom)
-        layout.addWidget(self.wineTankWidget, 0, Qt.AlignCenter)
+        # init widgets
+        self._wineDrawingWidget = WineDrawingWidget()
+        self._wineLabelWidget = WineLabelWidget()
+        self._wineButtonWidget = WineButtonWidget()
 
         # TANK OBJ HERE ##############
         self.wineTank = wineTank
         # TANK OBJ HERE ##############
+
+        # displayed values
+        self._displayedLevel = self.wineTank.getCurrentLevel()
+        self._displayedPressure = self.wineTank.getPressure()
+        self._displayedAlcohol = self.wineTank.getAlcohol()
+
+        # target values, set to None if no target
+        self._targetLevel = None
+        self._targetPressure = None
+        self._targetAlcohol = None
+
+        # function states
+        self._refillState = False
+        self._dumpState = False
+        self._fermentState = False
+
+        # graph obj with data
+        # TODO: add graph here
+
+        # init UI
+        self.initUI()
         self.update()
 
         #############button clicked events################
-        self.wineControllerWidget.fermentButton.clicked.connect(self.ferment)
+        self._wineButtonWidget.fermentButton.clicked.connect(self.ferment)
+        self._wineButtonWidget.refillButton.clicked.connect(self.refill)
+        self._wineButtonWidget.dumpButton.clicked.connect(self.dumpAll)
 
-    # Update the GUI
+    def initUI(self):
+        """Initialize the UI"""
+        # set frame properties
+        self.setStyleSheet("background-color: rgb(216, 216, 214);")
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
+        self.setLineWidth(3)
+        self.setMidLineWidth(3)
+        # define layout
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        # add widgets to layout
+        layout.addWidget(self._wineLabelWidget, 0, Qt.AlignCenter)
+        layout.addWidget(self._wineButtonWidget, 0, Qt.AlignCenter | Qt.AlignBottom)
+        layout.addWidget(self._wineDrawingWidget, 0, Qt.AlignCenter)
+
     def update(self):
         """Update the GUI based on the target values and actual values"""
-        currentLevel = self.wineTank.getCurrentLevel()
-        currentPressure = self.wineTank.getPressure()
-        currentAlcohol = self.wineTank.getAlcohol()
-        # check if level target values are set
-        if self.wineControllerWidget.targetLevel is not None:
-            if currentLevel < self.wineControllerWidget.targetLevel:
-                self.wineTank.setCurrentLevel(currentLevel + 1)
-                #################################################
-                # TODO: decrement water and apple levels in the FILES
-                # hard code dat shit!
-                ###################################################
-            else:
-                self.wineTank.setCurrentLevel(currentLevel - 1)
-        # check if pressure target values are set
-        if self.wineControllerWidget.targetPressure is not None:
-            if currentPressure < self.wineControllerWidget.targetPressure:
-                self.wineTank.setPressure(currentPressure + 1)
-            else:
-                self.wineTank.setPressure(currentPressure - 1)
-        # check if alcohol target values are set
-        if self.wineControllerWidget.targetAlcohol is not None:
-            if currentAlcohol < self.wineControllerWidget.targetAlcohol:
-                self.wineTank.setAlcohol(currentAlcohol + 1)
-            else:
-                self.wineTank.setAlcohol(currentAlcohol - 1)
+        # get actual values from tank class
+        self._displayedLevel = self.wineTank.getCurrentLevel()
+        self._displayedPressure = self.wineTank.getPressure()
+        self._displayedAlcohol = self.wineTank.getAlcohol()
 
-        # if target values are reached, set target values to None
-        if self.wineControllerWidget.targetLevel == currentLevel:
-            print("target wine level target reached")
-            self.wineControllerWidget.targetLevel = None
-            self.wineControllerWidget.fermentButton.enable()
-        if self.wineControllerWidget.targetPressure == currentPressure:
-            print("target wine pressure target reached")
-            self.wineControllerWidget.targetPressure = None
-        if self.wineControllerWidget.targetAlcohol == currentAlcohol:
-            print("target wine alcohol target reached")
-            self.wineControllerWidget.targetAlcohol = None
+        # meet targets values
+        self.meetTargets()
 
         # update widgets to actual values
-        self.wineTankWidget.level = currentLevel
-        self.wineMonitorWidget.pressure = currentPressure
-        self.wineMonitorWidget.alcohol = currentAlcohol
+        self._wineDrawingWidget.level = self._displayedLevel
+        self._wineLabelWidget.pressure = self._displayedPressure
+        self._wineLabelWidget.alcohol = self._displayedAlcohol
 
-    # takes grapes from the grape tank,return false if not enough grpaes
-    def takeGrapes(self, value):
-        # TODO:
-        # open the grape tank file
+        # update graph with displayed values
+        # TODO: implemtn graph
+        # self._somethingGraph.update(somrthign)
 
-        # check if there are enough grapes
+    def meetTargets(self):
+        """checks if target values are set and meets them by incrementing or decrementing the actual values"""
+        # check if target values are set
+        if self._targetLevel is not None:
+            if int(self._displayedLevel) < self._targetLevel:
+                # take from grapes and water
+                self.wineTank.takeGrape(1)
+                self.wineTank.takeWater(1)
+            elif int(self._displayedLevel) > self._targetLevel:
+                self.wineTank.setCurrentLevel(self._displayedLevel - 1)
+            else:
+                print("target wine level target reached")
+                self._targetLevel = None
+                if self._dumpState is False:
+                    self._wineButtonWidget.enableAllButtons()
+                    self._wineButtonWidget.refillButton.setText("REFILL WINE")
+                    self._refillState = False
 
-        # open the wine tank file
-        pass
+        if self._targetPressure is not None:
+            if int(self._displayedPressure) < self._targetPressure:
+                self.wineTank.setPressure(self._displayedPressure + 1)
+            elif int(self._displayedPressure) > self._targetPressure:
+                self.wineTank.setPressure(self._displayedPressure - 1)
+            else:
+                print("target wine pressure target reached")
+                self._targetPressure = None
 
-    # take water from water tank, return false if not enough water
-    def takeWater(self, value):
-        # open water file and read value
-        with open("./test/water_levels.txt", "r") as f:
-            f_contents = f.readlines()
-            currentWaterLevel = int(f_contents[-1])
+        if self._targetAlcohol is not None:
+            if int(self._displayedAlcohol) < self._targetAlcohol:
+                self.wineTank.setAlcohol(self._displayedAlcohol + 1)
+            elif int(self._displayedAlcohol) > self._targetAlcohol:
+                self.wineTank.setAlcohol(self._displayedAlcohol - 1)
+            else:
+                print("target wine alcohol target reached")
+                self._targetAlcohol = None
+                if self._dumpState is False:
+                    self._wineButtonWidget.enableAllButtons()
+                    self._wineButtonWidget.fermentButton.setText("FERMENT WINE")
+                    self._fermentState = False
 
-        # check if there is enough water
-        if (100 - self.ciderTank.getCurrentLevel()) / 2 > currentWaterLevel:
-            print("not enough water")
-            return False
+        # check for dump all
+        if (
+            self._dumpState is True
+            and self._displayedLevel == 0
+            and self._displayedPressure == 0
+            and self._displayedAlcohol == 0
+        ):
+            print("dump all sucess")
+            self._wineButtonWidget.enableAllButtons()
+            self._wineButtonWidget.dumpButton.setText("DUMP ALL")
+            self._dumpState = False
 
-        # open apple file and append new value
-        with open("./test/water_levels.txt", "a") as f:
-            f.write(str(currentWaterLevel - value) + "\n")
-
-        return True
-
-    # FOR SETTING TARGET VALUES
-    def setLevelTarget(self, value):
-        """Set the target level of the wine tank"""
-        self.wineControllerWidget.targetLevel = value
-
-    def setPressureTarget(self, value):
-        """Set the target pressure of the wine tank"""
-        self.wineControllerWidget.targetPressure = value
-
-    def setAlcoholTarget(self, value):
-        """Set the target alcohol of the wine tank"""
-        self.wineControllerWidget.targetAlcohol = value
+    def refill(self):
+        """Refill the wine tank - for refill button"""
+        self.inputDialog = InputDialog(
+            "Refill Wine", "Enter amount of wine to refill", int(self._displayedLevel)
+        )
+        result = self.inputDialog.exec_()
+        if result == QDialog.Accepted:
+            # check if there is enough grapes and water
+            if self.wineTank.checkGrape(self.inputDialog.value / 2) is False:
+                showPopup("WARNING", "Not enough grapes")
+            elif self.wineTank.checkWater(self.inputDialog.value / 2) is False:
+                showPopup("WARNING", "Not enough water")
+            else:
+                self._targetLevel = self.inputDialog.value
+                self._wineButtonWidget.disableAllButtons()
+                self._wineButtonWidget.refillButton.setText("REFILLING")
+                self._refillState = True
 
     def ferment(self):
-        """Refill the wine tank - for refill button"""
-        self.setLevelTarget(100)
-        self.wineControllerWidget.fermentButton.disable()
+        """Ferment Wine - for refill button"""
+
+        self.inputDialog = InputDialog(
+            "Ferment Wine",
+            "Enter the alcohol target amount",
+            int(self._displayedAlcohol),
+        )
+        result = self.inputDialog.exec_()
+        if result == QDialog.Accepted:
+            self._targetAlcohol = self.inputDialog.value
+            # TODO: implement pressure level
+            self._targetPressure = self.inputDialog.value / 2
+            self._wineButtonWidget.disableAllButtons()
+            self._wineButtonWidget.fermentButton.setText("FERMENTING")
+            self._fermentState = True
+
+    def dumpAll(self):
+        """Dump all wine - for dump button"""
+        self._targetLevel = 0
+        self._targetPressure = 0
+        self._targetAlcohol = 0
+        self._wineButtonWidget.disableAllButtons()
+        self._wineButtonWidget.dumpButton.setText("DUMPING")
+        self._dumpState = True
 
 
-#
-# Widget for Tank GUI
-#
-class WineTankWidget(QWidget):
+class WineDrawingWidget(QWidget):
+    """Widget for wine tank level graphic"""
+
     def __init__(self):
         super().__init__()
         # properties
         self.l = 500  # length of tank drawing
         self.w = 200  # width of tank drawing
-        self._level = 0  # determines the level of the tank 0 - 100
+        self._levelValue = 0  # determines the level of the tank 0 - 100
 
+        self.initUI()
+
+    def initUI(self):
+        """Initialize the UI"""
         self.setMinimumSize(300, 600)
-        self.setContentsMargins(0, 0, 0, 0)
-        self.label = QLabel(f"{self._level}%")
+        self.label = QLabel()
         self.label.setStyleSheet("font-size: 12px;")
 
         layout = QVBoxLayout()
@@ -164,8 +211,8 @@ class WineTankWidget(QWidget):
 
         layout.addWidget(self.label, 0, Qt.AlignBottom | Qt.AlignCenter)
 
-    # Paint event, !triggered by update()!
     def paintEvent(self, event):
+        """repaints the widget - trigered by update()"""
         painter = QPainter(self)
 
         # draw liquid
@@ -174,10 +221,10 @@ class WineTankWidget(QWidget):
         self.drawTank(painter)
 
         # update label
-        self.label.setText(f"{self._level}%")
+        self.label.setText(f"Wine Tank: {self._levelValue}%")
 
-    # Draw tank
     def drawTank(self, painter):
+        """draw the tank"""
         # color
         color = QColor(0, 0, 0, 75)  # black
         painter.setPen(QPen(color, 4))  # line
@@ -195,15 +242,15 @@ class WineTankWidget(QWidget):
         # draw
         painter.drawRoundedRect(int(x), int(y), int(w), int(l), r, r)
 
-    # Draw liquid
     def drawLiquid(self, painter):
+        """draw the liquid"""
         # color
-        painter.setBrush(QColor(115, 48, 60, 75))  # Wine purple
+        painter.setBrush(QColor(120, 24, 48, 75))  # Wine red
         painter.setPen(Qt.NoPen)
 
         # rect dimensions
         mod = 5
-        l = self._level * mod
+        l = self._levelValue * mod
         w = self.w
         r = 20
 
@@ -217,33 +264,38 @@ class WineTankWidget(QWidget):
     # Getter
     @property
     def level(self):
-        return self._level
+        return self._levelValue
 
     # Setter - use to change level plz
     @level.setter
     def level(self, value):
-        self._level = value
+        """Set the level value and update the widget"""
+        self._levelValue = value
         # level value check
-        if self._level > 100:
-            self._level = 100
+        if self._levelValue > 100:
+            self._levelValue = 100
             print("Wine Tank Overflow")
-        elif self._level < 0:
-            self._level = 0
+        elif self._levelValue < 0:
+            self._levelValue = 0
             print("Wine Tank Underflow")
-        self.update()
+
+        self.update()  # calls the paintEvent() function
 
 
-#
-# Widget for Monitor GUI
-#
-class WineMonitorWidget(QFrame):
+class WineLabelWidget(QFrame):
+    """Widget for wine info"""
+
     def __init__(self):
         super().__init__()
 
         # info
-        self._pressure = 0
-        self._alcohol = 0
+        self._pressureLabelValue = 0
+        self._alcoholLabelValue = 0
 
+        self.initUI()
+
+    def initUI(self):
+        """Initialize the UI"""
         # frame
         self.setStyleSheet("background-color: rgb(249, 249, 249);")
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
@@ -261,7 +313,7 @@ class WineMonitorWidget(QFrame):
             }
             """
         )
-        self.pressureLabel.setText(f"Wine Pressure: \n {self._pressure} psi")
+        self.pressureLabel.setText(f"Wine Pressure: \n {self._pressureLabelValue} psi")
         self.pressureLabel.setAlignment(Qt.AlignCenter)
 
         # alcohol label
@@ -274,7 +326,7 @@ class WineMonitorWidget(QFrame):
             }
             """
         )
-        self.alcoholLabel.setText(f"Wine Alcohol: \n {self._alcohol} %")
+        self.alcoholLabel.setText(f"Wine Alcohol: \n {self._alcoholLabelValue} %")
         self.alcoholLabel.setAlignment(Qt.AlignCenter)
 
         # layout
@@ -285,71 +337,61 @@ class WineMonitorWidget(QFrame):
         layout.addWidget(self.pressureLabel, 0, Qt.AlignCenter)
         layout.addWidget(self.alcoholLabel, 0, Qt.AlignCenter)
 
-    # Getter
+    def mouseDoubleClickEvent(self, event):
+        """Event for double clicking the widget"""
+        # show graphs
+        # TODO: implement graph
+        # self.parent().showsomethingGraph()
+
     @property
     def pressure(self):
-        return self._pressure
+        return self._pressureLabelValue
 
-    # Setter
     @pressure.setter
     def pressure(self, value):
-        self._pressure = value
-        self.pressureLabel.setText(f"Wine Pressure: \n {self._pressure} psi")
+        """Set the pressure label value and update the widget"""
+        self._pressureLabelValue = value
+        self.pressureLabel.setText(f"Wine Pressure: \n {self._pressureLabelValue} psi")
 
-    # Getter
     @property
     def alcohol(self):
-        return self._alcohol
+        return self._alcoholLabelValue
 
-    # Setter
     @alcohol.setter
     def alcohol(self, value):
-        self._alcohol = value
-        self.alcoholLabel.setText(f"Wine Alcohol: \n {self._alcohol} %")
+        """Set the alcohol label value and update the widget"""
+        self._alcoholLabelValue = value
+        self.alcoholLabel.setText(f"Wine Alcohol: \n {self._alcoholLabelValue} %")
 
 
-#
-# widget for Controllers
-#
-class WineControllerWidget(QWidget):
+class WineButtonWidget(QWidget):
     def __init__(self):
         super().__init__()
-        # target values
-        self._targetLevel = None
-        self._targetPressure = None
-        self._targetAlcohol = None
+        self.initUI()
 
+    def initUI(self):
         # layout
         layout = QVBoxLayout()
         self.setLayout(layout)
 
         # buttons
-        self.fermentButton = Button("FERMENT")
+        self.refillButton = Button("REFILL WINE")
+        self.dumpButton = Button("DUMP ALL")
+        self.fermentButton = Button("FERMENT WINE")
 
         # add widgets to layout
-        layout.addWidget(self.fermentButton, 0, Qt.AlignBottom | Qt.AlignCenter)
+        layout.addWidget(self.fermentButton, 0, Qt.AlignTop | Qt.AlignCenter)
+        layout.addWidget(self.dumpButton, 0, Qt.AlignBottom | Qt.AlignCenter)
+        layout.addWidget(self.refillButton, 0, Qt.AlignBottom | Qt.AlignCenter)
 
-    # Getter and Setter for target values
-    @property
-    def targetLevel(self):
-        return self._targetLevel
+    def disableAllButtons(self):
+        """Disable all buttons"""
+        self.refillButton.disable()
+        self.dumpButton.disable()
+        self.fermentButton.disable()
 
-    @targetLevel.setter
-    def targetLevel(self, value):
-        self._targetLevel = value
-
-    @property
-    def targetPressure(self):
-        return self._targetPressure
-
-    @targetPressure.setter
-    def targetPressure(self, value):
-        self._targetPressure = value
-
-    @property
-    def targetAlcohol(self):
-        return self._targetAlcohol
-
-    @targetAlcohol.setter
-    def targetAlcohol(self, value):
-        self._targetAlcohol = value
+    def enableAllButtons(self):
+        """Enable all buttons"""
+        self.refillButton.enable()
+        self.dumpButton.enable()
+        self.fermentButton.enable()

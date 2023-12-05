@@ -19,8 +19,12 @@ from PyQt5.QtGui import QMouseEvent, QPixmap
 
 class TitleWidget(QFrame):
     def __init__(self):
+        """Creates a title bar widget"""
         super().__init__()
+        self.initUI()
 
+    def initUI(self):
+        """Initialize UI elements"""
         # frame
         self.setContentsMargins(0, 0, 0, 0)
         self.setFixedHeight(75)
@@ -92,42 +96,43 @@ class TitleWidget(QFrame):
         self.IsDraggable = False
         self.offset = None
 
-    # drag window function
-    # mouse click
+    # drag window functions
     def mousePressEvent(self, event: QMouseEvent):
+        """Draggable window function - on mouse click"""
         if event.button() == Qt.LeftButton:
             self.IsDraggable = True
             self.offset = (
                 event.globalPos() - self.parent().pos()
             )  # global pos of the click event - the pos of the parent (window)
 
-    # mouse move
     def mouseMoveEvent(self, event: QMouseEvent):
+        """Draggable window function - on mouse move"""
         if self.IsDraggable:
             self.parent().move(event.globalPos() - self.offset)
 
-    # mouse release
     def mouseReleaseEvent(self, event: QMouseEvent):
+        """Draggable window function - on mouse release"""
         self.IsDraggable = False
 
-    # double click to maximize window fucntion
+    # maximize window fucntion
     def mouseDoubleClickEvent(self, event: QMouseEvent):
+        """Maximize window function - on double click"""
         self.maximizeWindow()
 
     # button functions
-    # minimize button function
     def minimizeWindow(self):
+        """Minimize window button function"""
         self.parent().showMinimized()
 
-    # maximize button function
     def maximizeWindow(self):
+        """Maximize window button function"""
         if self.parent().isMaximized():
             self.parent().showNormal()
         else:
             self.parent().showMaximized()
 
-    # close button function
     def closeWindow(self):
+        """Close window button function"""
         self.parent().close()
 
 
