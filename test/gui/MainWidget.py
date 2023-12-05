@@ -10,13 +10,26 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QTimer
 
-# relative path for imports
-if __name__ != "__main__":
-    from .WaterWidget import WaterWidget
-    from .WineWidget import WineWidget
-    from .CiderWidget import CiderWidget
-    from .GrapeWidget import GrapeWidget
-    from .AppleWidget import AppleWidget
+# import WIDGETS
+from .WaterWidget import WaterWidget
+from .WineWidget import WineWidget
+from .CiderWidget import CiderWidget
+from .GrapeWidget import GrapeWidget
+from .AppleWidget import AppleWidget
+
+# import TANKS
+from WaterTank import WaterTank
+from AppleTank import AppleTank
+from CiderTank import CiderTank
+from WineTank import WineTank
+from grapeTank import GrapeTank
+
+waterLevelFile = "./test/water_levels.txt"
+waterPurityFile = "./test/water_puritys.txt"
+appleLevelFile = "./test/apple_levels.txt"
+appleConcentrationFile = "./test/apple_concentration.txt"
+grapeLevelFile = "./test/grapeLevel.txt"
+grapeBacteriaFile = "./test/grapeBacteria.txt"
 
 
 #
@@ -24,8 +37,20 @@ if __name__ != "__main__":
 #
 class MainWidget(QFrame):
     def __init__(self):
+        """Main widget for the application"""
         super().__init__()
+        # tank objects###################
+        self.waterTank = WaterTank([waterLevelFile, waterPurityFile])
+        self.appleTank = AppleTank([appleLevelFile, appleConcentrationFile])
+        self.ciderTank = CiderTank()
+        self.wineTank = WineTank()
+        self.grapeTank = GrapeTank(grapeLevelFile, grapeBacteriaFile)
+        # tank objects###################
 
+        self.initUI()
+
+    def initUI(self):
+        """Initialize UI elements"""
         # window properties
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowTitle("BrewMaster")
@@ -38,11 +63,11 @@ class MainWidget(QFrame):
         self.setLayout(layout)
 
         # widgets
-        self.waterWidget = WaterWidget()
-        self.wineWidget = WineWidget()
-        self.ciderWidget = CiderWidget()
-        self.appleWidget = AppleWidget()
-        self.grapeWidget = GrapeWidget()
+        self.waterWidget = WaterWidget(self.waterTank)
+        self.wineWidget = WineWidget(self.wineTank)
+        self.ciderWidget = CiderWidget(self.ciderTank)
+        self.appleWidget = AppleWidget(self.appleTank)
+        self.grapeWidget = GrapeWidget(self.grapeTank)
 
         # add widgets to layout
         layout.addWidget(self.appleWidget)
@@ -51,35 +76,11 @@ class MainWidget(QFrame):
         layout.addWidget(self.wineWidget)
         layout.addWidget(self.grapeWidget)
 
-
-if __name__ == "__main__":
-    # test code
-    from WaterWidget import WaterWidget
-    from WineWidget import WineWidget
-    from CiderWidget import CiderWidget
-    from GrapeWidget import GrapeWidget
-    from AppleWidget import AppleWidget
-
-    app = QApplication(sys.argv)
-    win = MainWidget()
-    win.show()
-
-    counter = 0
-
-    def increment_level():
-        global counter
-        win.waterWidget.changeLevels(counter)
-        win.wineWidget.changeLevels(counter)
-        win.ciderWidget.changeLevels(counter)
-        win.appleWidget.changeLevels(counter)
-        win.grapeWidget.changeLevels(counter)
-        counter += 5
-
-    # Create a QTimer
-    timer = QTimer()
-    timer.timeout.connect(
-        increment_level
-    )  # Connect timeout signal to increment_level slot
-    timer.start(1000)  # Set the timer to time out every second
-
-    sys.exit(app.exec())
+    def update(self):
+        """Update all the widgets in the main widget"""
+        print("MainWidget.update()")
+        self.waterWidget.update()
+        self.wineWidget.update()
+        self.ciderWidget.update()
+        self.appleWidget.update()
+        self.grapeWidget.update()

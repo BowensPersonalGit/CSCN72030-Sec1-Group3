@@ -13,15 +13,23 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QTimer
 
+
 class FooterWidget(QFrame):
     def __init__(self):
+        """creates a footer widget"""
         super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        """Initialize UI elements"""
         self.setContentsMargins(0, 0, 0, 0)
         self.setFixedHeight(40)
-        self.setStyleSheet("background-color: rgb(50, 50, 50);padding: 0px; margin: 0px;")
+        self.setStyleSheet(
+            "background-color: rgb(50, 50, 50);padding: 0px; margin: 0px;"
+        )
         # version label
         self.versionLabel = QLabel()
-        self.versionLabel.setText("Version 9999999999999")
+        self.versionLabel.setText("Version 69")
         self.versionLabel.setStyleSheet("color: white; font-size: 12px;")
         self.versionLabel.setAlignment(Qt.AlignRight)
 
@@ -33,9 +41,7 @@ class FooterWidget(QFrame):
         layout.addWidget(self.versionLabel, 0, Qt.AlignRight | Qt.AlignVCenter)
 
 
-
 if __name__ == "__main__":
-
     # test code
     from PyQt5.QtWidgets import QApplication
 
