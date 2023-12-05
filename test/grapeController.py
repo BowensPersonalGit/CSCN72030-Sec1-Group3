@@ -1,6 +1,3 @@
-#from abstract_classes.controller import Controller
-
-
 class GrapeController():       
     def __init__(self, Level_File, Bacteria_File):
         self.Level_File = Level_File

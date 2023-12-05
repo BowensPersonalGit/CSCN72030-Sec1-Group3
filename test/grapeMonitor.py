@@ -1,6 +1,3 @@
-# from abc import abstractmethod
-# from abstract_classes.monitor import Monitor
-
 class GrapeMonitor():
     def __init__(self, Level_File, Bacteria_File):
         self.Level_File = Level_File
