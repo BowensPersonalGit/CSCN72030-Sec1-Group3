@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 
 
 class Button(QPushButton):
+    """Creates a stylized button with the given text"""
     def __init__(self, text: str):
         """ creates a button with the given text"""
         super().__init__(text)
@@ -41,6 +42,8 @@ class Button(QPushButton):
                 """
         )
         self.setCursor(Qt.PointingHandCursor)
+        self.setEnabled(True)
+
 
     def disable(self):
         """ disables the button """
@@ -56,3 +59,4 @@ class Button(QPushButton):
                 """
         )
         self.setCursor(Qt.ForbiddenCursor)
+        self.setEnabled(False)

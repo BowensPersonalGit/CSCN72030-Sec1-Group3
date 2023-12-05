@@ -42,10 +42,9 @@ layout.addWidget(footer)
 # show
 title.show()
 main.show()
-
 # GLOBAL UPDATE ALL WIDGETS
 timer = QTimer()
 timer.timeout.connect(main.update) 
-timer.start(500)  
+timer.start(250)  
 
 sys.exit(app.exec())

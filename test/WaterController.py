@@ -1,15 +1,14 @@
-#from abstract_classes.controller import Controller
+# from abstract_classes.controller import Controller
 
-class WaterController():
+
+class WaterController:
     def __init__(self, sourceNames: list):
-        print("WaterController __init__")
         self.sourceNames = sourceNames
-        
+
     def controlCurrentLevel(self, value):
         print(f"WaterController.changeCurrentLevel({value})")
         with open(self.sourceNames[0], "a") as f:
             f.write(str(value) + "\n")
-
 
     def controlPurity(self, value):
         print(f"WaterController.changePurity({value})")
