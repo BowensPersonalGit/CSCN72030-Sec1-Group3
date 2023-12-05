@@ -35,7 +35,16 @@ class AppleTank:
         """Update values from the apple monitor"""
         self.current_level = self.appleMonitor.monitorCurrentLevel()
         self.concentration = self.appleMonitor.monitorConcentration()
+    
+    def concentrate(self):
+        """Concentrate the apple juice"""
+        self.setConcentration(self.getConcentration() + 1)
+        self.setCurrentLevel(self.getCurrentLevel() - 1)
 
+    def dilute(self):
+        """Dilute the apple juice"""
+        self.setConcentration(self.getConcentration() - 1)
+        self.setCurrentLevel(self.getCurrentLevel() + 1)
 
 if __name__ == "__main__":
     w = AppleTank(["./test/apple_levels.txt", "./test/apple_concentration.txt"])

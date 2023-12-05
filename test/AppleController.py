@@ -2,7 +2,6 @@
 
 class AppleController():
     def __init__(self, sourceNames: list):
-        print("AppleController __init__")
         self.sourceNames = sourceNames
         
     def controlCurrentLevel(self, value):
