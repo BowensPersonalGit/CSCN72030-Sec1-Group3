@@ -3,8 +3,10 @@ from abstract_classes.device import Device
 
 
 class Controller(Device):
+    def __init__(self):
+        super().__init__()
+
     @abstractmethod
-    def changeCurrentLevel(self):
-        #moves the filePointer for currentLevel in the fileIO
-        return
+    def controlCurrentLevel(self):
+        pass
     

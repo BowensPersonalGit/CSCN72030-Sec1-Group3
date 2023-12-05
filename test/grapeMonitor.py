@@ -1,5 +1,7 @@
-class GrapeMonitor():
+from abstract_classes.monitor import Monitor
+class GrapeMonitor(Monitor):
     def __init__(self, Level_File, Bacteria_File):
+        super().__init__()
         self.Level_File = Level_File
         self.Bacteria_File = Bacteria_File
         

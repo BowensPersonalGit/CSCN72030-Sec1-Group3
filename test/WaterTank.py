@@ -1,13 +1,14 @@
 # water tank class
 # an instance of this class will be created in main
-# from abstract_classes.abstractTank import abstractTank as Tank
+from abstract_classes.tank import Tank
 
 from WaterMonitor import WaterMonitor
 from WaterController import WaterController
 
 
-class WaterTank:
+class WaterTank(Tank):
     def __init__(self, sourceNames: list):
+        super().__init__()
         self.waterMonitor = WaterMonitor(sourceNames)
         self.waterController = WaterController(sourceNames)
         self.purity = 0

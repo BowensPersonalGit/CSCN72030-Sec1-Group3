@@ -1,8 +1,8 @@
-# from abstract_classes.monitor import Monitor
+from abstract_classes.monitor import Monitor
 
-
-class AppleMonitor:
+class AppleMonitor(Monitor):
     def __init__(self, sourceNames: list):
+        super().__init__()
         self.sourceNames = sourceNames
 
     def monitorCurrentLevel(self):

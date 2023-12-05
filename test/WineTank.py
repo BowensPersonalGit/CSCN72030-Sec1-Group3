@@ -1,6 +1,6 @@
-# from abstractTank import *
-# from controller import *
-# from monitor import *
+from abstract_classes.tank import Tank
+from abstract_classes.monitor import Monitor
+from abstract_classes.controller import Controller
 
 # WineTank:
 # - alcohol - setter + getter - setAlcohol(value), getAlcohol()
@@ -13,8 +13,9 @@ waterFile = "./test/water_levels.txt"
 
 
 ## Backend File Reading for Wine Tank
-class WineMonitor:
+class WineMonitor(Monitor):
     def __init__(self, fileName):
+        super().__init__()
         self.fileName = fileName
 
     def getValue(self):
@@ -29,10 +30,11 @@ class WineMonitor:
             else:
                 # If the file is empty it means we havnt brewed any Wine yet so we return 0
                 return 0
-
+    def monitorCurrentLevel(self):
+        return self.getValue()
 
 ## Backend File Writing for Wine Tank
-class WineController:
+class WineController(Controller):
     def __init__(self, fileName):
         self.fileName = fileName
 
@@ -42,9 +44,11 @@ class WineController:
             # Write the value to the last line
             file.write(str(value) + "\n")
 
+    def controlCurrentLevel(self):
+        return self.setValue()
 
 ## Object the GUI interacts with:
-class WineTank:
+class WineTank(Tank):
     def __init__(self):
         self.alcMonitor = WineMonitor("./test/winealcohol.txt")
         self.alcController = WineController("./test/winealcohol.txt")
