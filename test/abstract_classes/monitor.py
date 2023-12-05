@@ -1,10 +1,10 @@
 from abc import abstractmethod
 from abstract_classes.device import Device
-
-
 class Monitor(Device):
+    def __init__(self):
+        super().__init__()
+
     @abstractmethod
     def monitorCurrentLevel(self):
-        #Checks FileIO for the current level and returns it
-        return
+        pass
 

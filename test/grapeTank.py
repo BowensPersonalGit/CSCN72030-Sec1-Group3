@@ -1,9 +1,9 @@
-# from abstract_classes.abstractTank import Tank
+from abstract_classes.tank import Tank
 from grapeController import GrapeController
 from grapeMonitor import GrapeMonitor
 
 
-class GrapeTank:
+class GrapeTank(Tank):
     def __init__(self, Level_File, Bacteria_File):
         self.controller = GrapeController(Level_File, Bacteria_File)
         self.monitor = GrapeMonitor(Level_File, Bacteria_File)
@@ -26,11 +26,11 @@ class GrapeTank:
         return self._bacteriaFileLine
 
     def setCurrentLevel(self, newLevel):
-        self.controller.changeCurrentLevel(newLevel)
+        self.controller.controlCurrentLevel(newLevel)
         self._currentLevel = newLevel
 
     def setBacteriaLevel(self, newLevel):
-        self.controller.changeBacteriaLevel(newLevel)
+        self.controller.controlBacteriaLevel(newLevel)
         self._bacteria = newLevel
     
     def update(self):

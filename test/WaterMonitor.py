@@ -1,8 +1,9 @@
-# from abstract_classes.monitor import Monitor
+from abstract_classes.monitor import Monitor
 
 
-class WaterMonitor():
+class WaterMonitor(Monitor):
     def __init__(self, sourceNames: list):
+        super().__init__()
         self.sourceNames = sourceNames
 
     def monitorCurrentLevel(self):

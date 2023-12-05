@@ -1,4 +1,4 @@
-class Device():
-    def __init__(self, sourceName, filePointer):
-        self.sourceName = sourceName
-        self.filePointer = filePointer
+from abc import ABC, abstractmethod
+class Device(ABC):
+    def __init__(self):
+        self.sourceName = None

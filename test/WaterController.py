@@ -1,8 +1,7 @@
-# from abstract_classes.controller import Controller
-
-
-class WaterController:
+from abstract_classes.controller import Controller
+class WaterController(Controller):
     def __init__(self, sourceNames: list):
+        super().__init__()
         self.sourceNames = sourceNames
 
     def controlCurrentLevel(self, value):

@@ -1,13 +1,14 @@
 # apple tank class
 # an instance of this class will be created in main
-# from abstract_classes.abstractTank import abstractTank as Tank
+from abstract_classes.tank import Tank
 
 from AppleMonitor import AppleMonitor
 from AppleController import AppleController
 
 
-class AppleTank:
+class AppleTank(Tank):
     def __init__(self, sourceNames: list):
+        super().__init__()
         self.appleMonitor = AppleMonitor(sourceNames)
         self.appleController = AppleController(sourceNames)
         self.concentration = 0

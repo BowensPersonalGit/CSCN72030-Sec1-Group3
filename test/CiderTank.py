@@ -1,6 +1,6 @@
-# from abstractTank import *
-# from controller import *
-# from monitor import *
+from abstract_classes.tank import Tank
+from abstract_classes.monitor import Monitor
+from abstract_classes.controller import Controller
 
 # CiderTank:
 # - alcohol - setter + getter - setAlcohol(value), getAlcohol()
@@ -13,8 +13,9 @@ waterFile = "./test/water_levels.txt"
 
 
 ## Backend File Reading for Cider Tank
-class CiderMonitor:
+class CiderMonitor(Monitor):
     def __init__(self, fileName):
+        super().__init__()
         self.fileName = fileName
 
     def getValue(self):
@@ -29,11 +30,15 @@ class CiderMonitor:
             else:
                 # If the file is empty it means we havnt brewed any Cider yet so we return 0
                 return 0
+    def monitorCurrentLevel(self):
+        return self.getValue()
+    
 
 
 ## Backend File Writing for Cider Tank
-class CiderController:
+class CiderController(Controller):
     def __init__(self, fileName):
+        super().__init__()
         self.fileName = fileName
 
     def setValue(self, value):
@@ -41,11 +46,15 @@ class CiderController:
         with open(self.fileName, "a") as file:
             # Write the value to the last line
             file.write(str(value) + "\n")
+    
+    def controlCurrentLevel(self):
+        return self.setValue()
 
 
 ## Object the GUI interacts with:
-class CiderTank:
+class CiderTank(Tank):
     def __init__(self):
+        super().__init__()
         self.alcMonitor = CiderMonitor("./test/cideralcohol.txt")
         self.alcController = CiderController("./test/cideralcohol.txt")
         self.pressureMonitor = CiderMonitor("./test/ciderpressure.txt")
