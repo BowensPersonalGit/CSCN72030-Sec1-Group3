@@ -151,9 +151,9 @@ class WineWidget(QFrame):
         result = self.inputDialog.exec_()
         if result == QDialog.Accepted:
             # check if there is enough grapes and water
-            if self.wineTank.checkGrape(self.inputDialog.value / 2) is False:
+            if self.wineTank.checkGrape((self.inputDialog.value - self._displayedLevel) / 2) is False:
                 showPopup("WARNING", "Not enough grapes")
-            elif self.wineTank.checkWater(self.inputDialog.value / 2) is False:
+            elif self.wineTank.checkWater((self.inputDialog.value -self._displayedLevel)  / 2) is False:
                 showPopup("WARNING", "Not enough water")
             else:
                 self._targetLevel = self.inputDialog.value

@@ -151,9 +151,9 @@ class CiderWidget(QFrame):
         result = self.inputDialog.exec_()
         if result == QDialog.Accepted:
             # check if there is enough apples and water
-            if self.ciderTank.checkApple(self.inputDialog.value / 2) is False:
+            if self.ciderTank.checkApple((self.inputDialog.value - self._displayedLevel) / 2) is False:
                 showPopup("WARNING", "Not enough apples")
-            elif self.ciderTank.checkWater(self.inputDialog.value / 2) is False:
+            elif self.ciderTank.checkWater((self.inputDialog.value - self._displayedLevel)/ 2) is False:
                 showPopup("WARNING", "Not enough water")
             else:
                 self._targetLevel = self.inputDialog.value
