@@ -45,6 +45,6 @@ main.show()
 # GLOBAL UPDATE ALL WIDGETS
 timer = QTimer()
 timer.timeout.connect(main.update) 
-timer.start(250)  
+timer.start(300)  
 
 sys.exit(app.exec())

@@ -256,6 +256,7 @@ class WaterLabelWidget(QFrame):
         self.setMidLineWidth(3)
         self.setFixedHeight(75)
         self.setMaximumWidth(150)
+        self.setToolTip("Double click to view graph")
 
         # label
         self.purityLabel = QLabel()

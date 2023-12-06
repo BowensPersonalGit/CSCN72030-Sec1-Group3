@@ -1,13 +1,7 @@
 # Apple widget
 import sys
 
-from PyQt5.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QLabel,
-    QFrame,
-    QDialog
-)
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame, QDialog
 from PyQt5.QtGui import QPainter, QColor, QPen
 from PyQt5.QtCore import Qt
 
@@ -103,7 +97,7 @@ class AppleWidget(QFrame):
             elif int(self._displayedLevel) > self._targetLevel:
                 # decrement to meet target
                 self.appleTank.setCurrentLevel(self._displayedLevel - 1)
-            else: # target met
+            else:  # target met
                 print("target apple level target reached")
                 self._targetLevel = None
                 self._appleButtonWidget.refillButton.enable()
@@ -114,16 +108,20 @@ class AppleWidget(QFrame):
                 self.appleTank.concentrate()
             elif int(self._displayedConcentration) > self._targetConcentration:
                 self.appleTank.dilute()
-            else: # target met
+            else:  # target met
                 print("target apple concentration target reached")
                 self._targetConcentration = None
-                self._appleButtonWidget.concentrateButton.enable()    
-                self._appleButtonWidget.concentrateButton.setText("CONCENTRATE APPLES") 
+                self._appleButtonWidget.concentrateButton.enable()
+                self._appleButtonWidget.concentrateButton.setText("CONCENTRATE APPLES")
 
     def refill(self):
         """Refill the apple tank - for refill button"""
         # pop up input dialog
-        self.inputDialog = InputDialog("Apple Refill", "Enter the amount of apples to refill", int(self._displayedLevel))
+        self.inputDialog = InputDialog(
+            "Apple Refill",
+            "Enter the amount of apples to refill",
+            int(self._displayedLevel),
+        )
         result = self.inputDialog.exec_()
         if result == QDialog.Accepted:
             # set target level
@@ -135,7 +133,11 @@ class AppleWidget(QFrame):
     def concentrate(self):
         """Concentrate the apple tank - for concentrate button"""
         # pop up input dialog
-        self.inputDialog = InputDialog("Apple Concentrate", "Enter the amount of apples to concentrate", int(self._displayedConcentration))
+        self.inputDialog = InputDialog(
+            "Apple Concentrate",
+            "Enter the amount of apples to concentrate",
+            int(self._displayedConcentration),
+        )
         result = self.inputDialog.exec_()
         if result == QDialog.Accepted:
             # set target concentration
@@ -143,6 +145,7 @@ class AppleWidget(QFrame):
             # disable button
             self._appleButtonWidget.concentrateButton.disable()
             self._appleButtonWidget.concentrateButton.setText("CONCENTRATING...")
+
 
 class AppleDrawingWidget(QWidget):
     """Widget for Apple level graphic"""
@@ -260,6 +263,7 @@ class AppleLabelWidget(QFrame):
         self.setMidLineWidth(3)
         self.setFixedHeight(75)
         self.setMaximumWidth(200)
+        self.setToolTip("Double click to view graph")
 
         # label
         self.concentrationLabel = QLabel()
