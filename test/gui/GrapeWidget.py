@@ -100,7 +100,7 @@ class GrapeWidget(QFrame):
                 print("target grape level target reached")
                 self._targetLevel = None
                 self._grapeButtonWidget.refillButton.enable()
-                self._grapeButtonWidget.refillButton.setText("REFILL GRAPES")
+                self._grapeButtonWidget.refillButton.setText("CONTROL GRAPES")
 
         if self._targetBacteria is not None:  # bacteria
             if self._displayedBacteria < self._targetBacteria:
@@ -113,7 +113,7 @@ class GrapeWidget(QFrame):
                 print("target grape bacteria target reached")
                 self._targetBacteria = None
                 self._grapeButtonWidget.cleanseButton.enable()
-                self._grapeButtonWidget.cleanseButton.setText("CLEAN GRAPES")
+                self._grapeButtonWidget.cleanseButton.setText("BACTERIA")
 
     def refill(self):
         """Refill the grape tank - for refill button"""
@@ -314,8 +314,8 @@ class GrapeButtonWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.refillButton = Button("REFILL GRAPES")
-        self.cleanseButton = Button("CLEAN GRAPES")
+        self.refillButton = Button("CONTROL GRAPES")
+        self.cleanseButton = Button("BACTERIA")
 
         # add widgets to layout
         layout.addWidget(self.cleanseButton, 0, Qt.AlignTop | Qt.AlignCenter)

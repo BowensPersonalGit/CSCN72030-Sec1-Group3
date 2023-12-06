@@ -103,7 +103,7 @@ class WaterWidget(QFrame):
                 print("target water level target reached")
                 self._targetLevel = None
                 self._waterButtonWidget.refillButton.enable()
-                self._waterButtonWidget.refillButton.setText("REFILL WATER")
+                self._waterButtonWidget.refillButton.setText("CONTROL WATER")
         
         if self._targetPurity is not None:  # purity
             if self._displayedPurity < self._targetPurity:
@@ -116,7 +116,7 @@ class WaterWidget(QFrame):
                 print("target water purity target reached")
                 self._targetPurity = None
                 self._waterButtonWidget.purifyButton.enable()
-                self._waterButtonWidget.purifyButton.setText("PURIFY WATER")
+                self._waterButtonWidget.purifyButton.setText("PURITY")
 
     def refill(self):
         """Refill the water tank - for refill button"""
@@ -309,8 +309,8 @@ class WaterButtonWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.refillButton = Button("REFILL WATER")
-        self.purifyButton = Button("PURIFY WATER")
+        self.refillButton = Button("CONTROL WATER")
+        self.purifyButton = Button("PURITY")
 
         # add widgets to layout
         layout.addWidget(self.purifyButton, 0, Qt.AlignTop | Qt.AlignCenter)

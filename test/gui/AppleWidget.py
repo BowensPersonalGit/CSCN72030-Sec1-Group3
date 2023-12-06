@@ -101,7 +101,7 @@ class AppleWidget(QFrame):
                 print("target apple level target reached")
                 self._targetLevel = None
                 self._appleButtonWidget.refillButton.enable()
-                self._appleButtonWidget.refillButton.setText("REFILL APPLES")
+                self._appleButtonWidget.refillButton.setText("CONTROL APPLES")
 
         if self._targetConcentration is not None:
             if int(self._displayedConcentration) < self._targetConcentration:
@@ -112,7 +112,7 @@ class AppleWidget(QFrame):
                 print("target apple concentration target reached")
                 self._targetConcentration = None
                 self._appleButtonWidget.concentrateButton.enable()
-                self._appleButtonWidget.concentrateButton.setText("CONCENTRATE APPLES")
+                self._appleButtonWidget.concentrateButton.setText("CONCENTRATE")
 
     def refill(self):
         """Refill the apple tank - for refill button"""
@@ -322,8 +322,8 @@ class AppleButtonWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.refillButton = Button("REFILL APPLES")
-        self.concentrateButton = Button("CONCENTRATE APPLES")
+        self.refillButton = Button("CONTROL APPLES")
+        self.concentrateButton = Button("CONCENTRATE")
 
         # add widgets to layout
         layout.addWidget(self.concentrateButton, 0, Qt.AlignTop | Qt.AlignCenter)

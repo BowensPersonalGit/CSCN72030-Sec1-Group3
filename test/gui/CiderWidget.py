@@ -107,7 +107,7 @@ class CiderWidget(QFrame):
                 if self._dumpState is False:
                     self._ciderButtonWidget.enableAllButtons()
                     self._refillState = False
-                    self._ciderButtonWidget.refillButton.setText("REFILL CIDER")
+                    self._ciderButtonWidget.refillButton.setText("CONTROL CIDER")
 
         if self._targetPressure is not None:
             if int(self._displayedPressure) < self._targetPressure:
@@ -375,7 +375,7 @@ class CiderButtonWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.refillButton = Button("REFILL CIDER")
+        self.refillButton = Button("CONTROL CIDER")
         self.dumpButton = Button("DUMP ALL")
         self.fermentButton = Button("FERMENT CIDER")
 

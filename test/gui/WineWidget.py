@@ -106,7 +106,7 @@ class WineWidget(QFrame):
                 self._targetLevel = None
                 if self._dumpState is False:
                     self._wineButtonWidget.enableAllButtons()
-                    self._wineButtonWidget.refillButton.setText("REFILL WINE")
+                    self._wineButtonWidget.refillButton.setText("CONTROL WINE")
                     self._refillState = False
 
         if self._targetPressure is not None:
@@ -375,7 +375,7 @@ class WineButtonWidget(QWidget):
         self.setLayout(layout)
 
         # buttons
-        self.refillButton = Button("REFILL WINE")
+        self.refillButton = Button("CONTROL WINE")
         self.dumpButton = Button("DUMP ALL")
         self.fermentButton = Button("FERMENT WINE")
 
